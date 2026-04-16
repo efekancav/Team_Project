@@ -6,19 +6,25 @@ public class PlayerController : MonoBehaviour
     public float walkSpeed = 4f;
     public float runSpeed = 7f;
     public float crouchSpeed = 2f;
-    public float jumpForce = 11f;
-    public float wallSlideSpeed = 2f;
     public float rollSpeed = 8f;
     public float rollDuration = 0.4f;
+
+    [Header("Jump Settings")]
+    public float jumpHeightInTiles = 2.5f;
+    public float jumpForwardDistanceInTiles = 5f;
+    public float tileSize = 1f;
+
+    [Header("Wall Slide")]
+    public float wallSlideSpeed = 0f; // 0 = duvarda neredeyse yapışık kalır
 
     [Header("Checks")]
     public Transform groundCheck;
     public float groundCheckRadius = 0.2f;
-    public LayerMask groundLayer;
 
     public Transform wallCheck;
-    public float wallCheckRadius = 0.2f;
-    public LayerMask wallLayer;
+    public float wallCheckRadius = 0.25f;
+
+    public LayerMask surfaceLayer; // Ground + Wall tek layer
 
     [Header("References")]
     public Rigidbody2D rb;
@@ -34,9 +40,17 @@ public class PlayerController : MonoBehaviour
     private bool isShielding;
     private bool isDead;
 
-    private bool canDoubleJump;
     private float rollTimer;
-    private int facingDirection = 1; // 1 = right, -1 = left
+    private int facingDirection = 1; // 1 = sağ, -1 = sol
+
+    // Hesaplanan jump değerleri
+    private float jumpVelocity;
+    private float jumpHorizontalVelocity;
+
+    void Start()
+    {
+        CalculateJumpValues();
+    }
 
     void Update()
     {
@@ -70,18 +84,32 @@ public class PlayerController : MonoBehaviour
         HandleWallSlide();
     }
 
+    void CalculateJumpValues()
+    {
+        float jumpHeight = jumpHeightInTiles * tileSize;
+        float jumpDistance = jumpForwardDistanceInTiles * tileSize;
+
+        float gravity = Mathf.Abs(Physics2D.gravity.y * rb.gravityScale);
+
+        // 2.5 tile yukarı çıkmak için gereken ilk dikey hız
+        jumpVelocity = Mathf.Sqrt(2f * gravity * jumpHeight);
+
+        // Aynı yükseklikte inen bir sıçramada toplam havada kalış süresi
+        float timeToApex = jumpVelocity / gravity;
+        float totalAirTime = timeToApex * 2f;
+
+        // 5 tile ileri gitmek için gereken yatay hız
+        jumpHorizontalVelocity = jumpDistance / totalAirTime;
+    }
+
     void CheckEnvironment()
     {
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, surfaceLayer);
 
-        bool touchingWall = Physics2D.OverlapCircle(wallCheck.position, wallCheckRadius, wallLayer);
+        bool touchingWall = Physics2D.OverlapCircle(wallCheck.position, wallCheckRadius, surfaceLayer);
 
-        isWallSliding = !isGrounded && touchingWall && rb.velocity.y < 0f && Mathf.Abs(moveInput) > 0.1f;
-
-        if (isGrounded)
-        {
-            canDoubleJump = true;
-        }
+        // Yerde değilse ve yana temas varsa wall slide
+        isWallSliding = !isGrounded && touchingWall;
     }
 
     void HandleLanding()
@@ -99,12 +127,19 @@ public class PlayerController : MonoBehaviour
         moveInput = Input.GetAxisRaw("Horizontal");
 
         isRunning = Input.GetKey(KeyCode.LeftShift) && Mathf.Abs(moveInput) > 0.1f && !isCrouching;
-        isCrouching = Input.GetKey(KeyCode.S) && isGrounded && !isRolling;
+        isCrouching = Input.GetKey(KeyCode.S) && isGrounded && !isRolling && !isShielding;
     }
 
     void HandleMovement()
     {
         if (isShielding)
+        {
+            rb.velocity = new Vector2(0f, rb.velocity.y);
+            return;
+        }
+
+        // Duvarda yapışık kalırken normal movement uygulama
+        if (isWallSliding)
         {
             rb.velocity = new Vector2(0f, rb.velocity.y);
             return;
@@ -127,23 +162,26 @@ public class PlayerController : MonoBehaviour
         if (!jumpPressed || isRolling || isShielding)
             return;
 
+        // Ground jump
         if (isGrounded)
         {
-            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+            float horizontal = 0f;
+
+            if (Mathf.Abs(moveInput) > 0.1f)
+                horizontal = Mathf.Sign(moveInput) * jumpHorizontalVelocity;
+
+            rb.velocity = new Vector2(horizontal, jumpVelocity);
             animator.SetTrigger("Jump");
+            return;
         }
-        else if (canDoubleJump && !isWallSliding)
+
+        // Infinite wall jump
+        if (isWallSliding)
         {
-            canDoubleJump = false;
-            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-            animator.SetTrigger("Jump");
-        }
-        else if (isWallSliding)
-        {
-            rb.velocity = new Vector2(-facingDirection * walkSpeed, jumpForce);
-            animator.SetTrigger("Jump");
+            int jumpDirection = -facingDirection; // duvardan ters yöne zıpla
+            rb.velocity = new Vector2(jumpDirection * jumpHorizontalVelocity, jumpVelocity);
             isWallSliding = false;
-            canDoubleJump = true;
+            animator.SetTrigger("Jump");
         }
     }
 
@@ -173,7 +211,7 @@ public class PlayerController : MonoBehaviour
 
         if (attackPressed && !isRolling && !isShielding && !isDead)
         {
-            int randomAttack = Random.Range(1, 4); // 1, 2, or 3
+            int randomAttack = Random.Range(1, 4);
             animator.SetInteger("AttackIndex", randomAttack);
             animator.SetTrigger("Attack");
         }
@@ -195,7 +233,7 @@ public class PlayerController : MonoBehaviour
         {
             if (rb.velocity.y < -wallSlideSpeed)
             {
-                rb.velocity = new Vector2(rb.velocity.x, -wallSlideSpeed);
+                rb.velocity = new Vector2(0f, -wallSlideSpeed);
             }
         }
     }
@@ -219,6 +257,7 @@ public class PlayerController : MonoBehaviour
 
     void HandleFacing()
     {
+        // Duvarda da karakter yön değiştirebilsin
         if (moveInput > 0.1f)
         {
             facingDirection = 1;
