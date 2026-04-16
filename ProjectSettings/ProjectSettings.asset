@@ -4,6 +4,7 @@
 PlayerSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 26
+  productGUID: 5c86b7e8ee59be642a8479cc034b63ed
   productGUID: 92d187ead701f2a4c8dc59107c504a38
   AndroidProfiler: 0
   AndroidFilterTouchesWhenObscured: 0
@@ -13,6 +14,7 @@ PlayerSettings:
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: DefaultCompany
+  productName: Team Project
   productName: 2Dgame
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
@@ -162,6 +164,7 @@ PlayerSettings:
   resetResolutionOnWindowResize: 0
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
+  applicationIdentifier: {}
   applicationIdentifier:
     Standalone: com.DefaultCompany.2DProject
   buildNumber:
@@ -169,6 +172,7 @@ PlayerSettings:
     VisionOS: 0
     iPhone: 0
     tvOS: 0
+  overrideDefaultApplicationIdentifier: 0
   overrideDefaultApplicationIdentifier: 1
   AndroidBundleVersionCode: 1
   AndroidMinSdkVersion: 22
@@ -252,6 +256,8 @@ PlayerSettings:
   iOSAutomaticallyDetectAndAddCapabilities: 1
   appleEnableProMotion: 0
   shaderPrecisionModel: 0
+  clonedFromGUID: c19f32bac17ee4170b3bf8a6a0333fb9
+  templatePackageId: com.unity.template.universal-2d@2.1.3
   clonedFromGUID: 10ad67313f4034357812315f3c407484
   templatePackageId: com.unity.template.2d@7.0.4
   templateDefaultScene: Assets/Scenes/SampleScene.unity
@@ -291,6 +297,9 @@ PlayerSettings:
   m_BuildTargetPlatformIcons: []
   m_BuildTargetBatching: []
   m_BuildTargetShaderSettings: []
+  m_BuildTargetGraphicsJobs: []
+  m_BuildTargetGraphicsJobMode: []
+  m_BuildTargetGraphicsAPIs: []
   m_BuildTargetGraphicsJobs:
   - m_BuildTarget: MacStandaloneSupport
     m_GraphicsJobs: 0
@@ -342,6 +351,7 @@ PlayerSettings:
   m_BuildTargetGroupLightmapSettings: []
   m_BuildTargetGroupLoadStoreDebugModeSettings: []
   m_BuildTargetNormalMapEncoding: []
+  m_BuildTargetDefaultTextureCompressionFormat: []
   m_BuildTargetDefaultTextureCompressionFormat:
   - m_BuildTarget: Android
     m_Format: 3
@@ -635,6 +645,7 @@ PlayerSettings:
   apiCompatibilityLevelPerPlatform: {}
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
+  metroPackageName: Team Project
   metroPackageName: 2Dgame
   metroPackageVersion: 
   metroCertificatePath: 
@@ -642,6 +653,7 @@ PlayerSettings:
   metroCertificateSubject: 
   metroCertificateIssuer: 
   metroCertificateNotAfter: 0000000000000000
+  metroApplicationDescription: Team Project
   metroApplicationDescription: 2Dgame
   wsaImages: {}
   metroTileShortName: 
@@ -711,6 +723,11 @@ PlayerSettings:
   apiCompatibilityLevel: 6
   activeInputHandler: 0
   windowsGamepadBackendHint: 0
+  cloudProjectId: 067b44b7-bce7-4913-88c0-b2744532abab
+  framebufferDepthMemorylessMode: 0
+  qualitySettingsNames: []
+  projectName: Team Project
+  organizationId: rondiaksofiia
   cloudProjectId: 1909a7c4-8348-42fa-ad7c-88d9da7fbe8b
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
