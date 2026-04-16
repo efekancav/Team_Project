@@ -6,6 +6,7 @@ TagManager:
   tags:
   - MovableBox
   - Ladder
+  tags: []
   layers:
   - Default
   - TransparentFX
@@ -14,6 +15,10 @@ TagManager:
   - Water
   - UI
   - 
+  - Ground
+  - Water
+  - UI
+  - Wall
   - 
   - 
   - 
