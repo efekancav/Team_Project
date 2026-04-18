@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4063543857703866323}
+  - component: {fileID: 7711399011413898574}
   - component: {fileID: 2815487709452825733}
   - component: {fileID: 814339752231345501}
   - component: {fileID: 1829240567615706863}
@@ -38,6 +39,27 @@ Transform:
   - {fileID: 8771264597056946408}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7711399011413898574
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2020865228252415204}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 107297cd266fa0b48b8af8c9edb0ffb0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  currentHealth: 0
+  maxLives: 3
+  currentLives: 0
+  respawnPoint: {fileID: 0}
+  respawnDelay: 1
+  invincibleDuration: 2
+  rb: {fileID: 814339752231345501}
+  animator: {fileID: 7820205783757889601}
 --- !u!114 &2815487709452825733
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59,6 +81,7 @@ MonoBehaviour:
   jumpForwardDistanceInTiles: 5
   tileSize: 1
   wallSlideSpeed: 2
+  climbSpeed: 3
   groundCheck: {fileID: 8132172953516450885}
   groundCheckRadius: 0.2
   wallCheck: {fileID: 7833197839789280049}
@@ -74,7 +97,7 @@ MonoBehaviour:
   crouchColliderSize: {x: 0.79, y: 1.05}
   crouchColliderOffset: {x: 0.108, y: -0.1}
   rollColliderSize: {x: 0.79, y: 0.85}
-  rollColliderOffset: {x: 0.108, y: -0.45}
+  rollColliderOffset: {x: 0.108, y: -0.1}
 --- !u!50 &814339752231345501
 Rigidbody2D:
   serializedVersion: 4

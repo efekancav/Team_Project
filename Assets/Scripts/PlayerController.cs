@@ -17,6 +17,9 @@ public class PlayerController : MonoBehaviour
     [Header("Wall Slide")]
     public float wallSlideSpeed = 0f;
 
+    [Header("Climb")]
+    public float climbSpeed = 3f;
+
     [Header("Checks")]
     public Transform groundCheck;
     public float groundCheckRadius = 0.2f;
@@ -46,6 +49,8 @@ public class PlayerController : MonoBehaviour
     private Vector2 standColliderOffset;
 
     private float moveInput;
+    private float verticalInput;
+
     private bool isGrounded;
     private bool wasGrounded;
     private bool isRunning;
@@ -55,11 +60,15 @@ public class PlayerController : MonoBehaviour
     private bool isShielding;
     private bool isDead;
 
+    private bool isOnLadder;
+    private bool isClimbing;
+
     private float rollTimer;
     private int facingDirection = 1;
 
     private float jumpVelocity;
     private float jumpHorizontalVelocity;
+    private float originalGravityScale;
 
     void Start()
     {
@@ -69,6 +78,7 @@ public class PlayerController : MonoBehaviour
             standColliderOffset = playerCollider.offset;
         }
 
+        originalGravityScale = rb.gravityScale;
         CalculateJumpValues();
     }
 
@@ -101,6 +111,7 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
+        HandleClimb();
         HandleMovement();
         HandleWallSlide();
     }
@@ -126,7 +137,7 @@ public class PlayerController : MonoBehaviour
 
         bool touchingWall = Physics2D.OverlapCircle(wallCheck.position, wallCheckRadius, surfaceLayer);
 
-        isWallSliding = !isGrounded && touchingWall;
+        isWallSliding = !isGrounded && touchingWall && !isClimbing;
     }
 
     void HandleLanding()
@@ -142,10 +153,11 @@ public class PlayerController : MonoBehaviour
     void HandleInput()
     {
         moveInput = Input.GetAxisRaw("Horizontal");
+        verticalInput = Input.GetAxisRaw("Vertical");
 
         bool crouchPressed = Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow);
 
-        if (crouchPressed && isGrounded && !isRolling && !isShielding)
+        if (crouchPressed && isGrounded && !isRolling && !isShielding && !isClimbing)
         {
             isCrouching = true;
         }
@@ -157,7 +169,11 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        isRunning = Input.GetKey(KeyCode.LeftShift) && Mathf.Abs(moveInput) > 0.1f && !isCrouching && !isRolling;
+        isRunning = Input.GetKey(KeyCode.LeftShift) &&
+                    Mathf.Abs(moveInput) > 0.1f &&
+                    !isCrouching &&
+                    !isRolling &&
+                    !isClimbing;
     }
 
     bool CanStandUp()
@@ -166,6 +182,32 @@ public class PlayerController : MonoBehaviour
             return true;
 
         return !Physics2D.OverlapCircle(headCheck.position, headCheckRadius, surfaceLayer);
+    }
+
+    void HandleClimb()
+    {
+        if (!isOnLadder)
+        {
+            isClimbing = false;
+            rb.gravityScale = originalGravityScale;
+            return;
+        }
+
+        if (Mathf.Abs(verticalInput) > 0.1f)
+        {
+            isClimbing = true;
+        }
+
+        if (isClimbing)
+        {
+            rb.gravityScale = 0f;
+            rb.velocity = new Vector2(0f, verticalInput * climbSpeed);
+
+            if (Mathf.Abs(verticalInput) < 0.1f)
+            {
+                rb.velocity = Vector2.zero;
+            }
+        }
     }
 
     void UpdateCollider()
@@ -192,6 +234,12 @@ public class PlayerController : MonoBehaviour
 
     void HandleMovement()
     {
+        if (isClimbing)
+        {
+            rb.velocity = new Vector2(0f, verticalInput * climbSpeed);
+            return;
+        }
+
         if (isShielding)
         {
             rb.velocity = new Vector2(0f, rb.velocity.y);
@@ -218,7 +266,7 @@ public class PlayerController : MonoBehaviour
     {
         bool jumpPressed = Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.W);
 
-        if (!jumpPressed || isRolling || isShielding || isCrouching)
+        if (!jumpPressed || isRolling || isShielding || isCrouching || isClimbing)
             return;
 
         if (isGrounded)
@@ -244,7 +292,12 @@ public class PlayerController : MonoBehaviour
 
     void HandleRoll()
     {
-        if (Input.GetKeyDown(KeyCode.LeftControl) && isGrounded && !isRolling && !isCrouching && !isShielding)
+        if (Input.GetKeyDown(KeyCode.LeftControl) &&
+            isGrounded &&
+            !isRolling &&
+            !isCrouching &&
+            !isShielding &&
+            !isClimbing)
         {
             isRolling = true;
             rollTimer = rollDuration;
@@ -266,7 +319,12 @@ public class PlayerController : MonoBehaviour
     {
         bool attackPressed = Input.GetKeyDown(KeyCode.J) || Input.GetMouseButtonDown(0);
 
-        if (attackPressed && !isRolling && !isShielding && !isDead && !isCrouching)
+        if (attackPressed &&
+            !isRolling &&
+            !isShielding &&
+            !isDead &&
+            !isCrouching &&
+            !isClimbing)
         {
             int randomAttack = Random.Range(1, 4);
             animator.SetInteger("AttackIndex", randomAttack);
@@ -276,7 +334,11 @@ public class PlayerController : MonoBehaviour
 
     void HandleShield()
     {
-        isShielding = (Input.GetKey(KeyCode.K) || Input.GetMouseButton(1)) && !isRolling && !isDead && !isCrouching;
+        isShielding = (Input.GetKey(KeyCode.K) || Input.GetMouseButton(1)) &&
+                      !isRolling &&
+                      !isDead &&
+                      !isCrouching &&
+                      !isClimbing;
 
         if (isShielding)
         {
@@ -308,12 +370,19 @@ public class PlayerController : MonoBehaviour
         isDead = true;
         isShielding = false;
         isRolling = false;
+        isClimbing = false;
+
         rb.velocity = Vector2.zero;
+        rb.gravityScale = originalGravityScale;
+
         animator.SetTrigger("Die");
     }
 
     void HandleFacing()
     {
+        if (isClimbing)
+            return;
+
         if (moveInput > 0.1f)
         {
             facingDirection = 1;
@@ -330,12 +399,32 @@ public class PlayerController : MonoBehaviour
     {
         animator.SetFloat("Speed", Mathf.Abs(moveInput));
         animator.SetFloat("YVelocity", rb.velocity.y);
+        animator.SetFloat("ClimbSpeed", Mathf.Abs(verticalInput));
 
         animator.SetBool("IsGrounded", isGrounded);
         animator.SetBool("IsRunning", isRunning);
         animator.SetBool("IsCrouching", isCrouching);
         animator.SetBool("IsWallSliding", isWallSliding);
         animator.SetBool("IsShielding", isShielding);
+        animator.SetBool("IsClimbing", isClimbing);
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Ladder"))
+        {
+            isOnLadder = true;
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Ladder"))
+        {
+            isOnLadder = false;
+            isClimbing = false;
+            rb.gravityScale = originalGravityScale;
+        }
     }
 
     void OnDrawGizmosSelected()
