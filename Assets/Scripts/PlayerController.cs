@@ -15,7 +15,7 @@ public class PlayerController : MonoBehaviour
     public float tileSize = 1f;
 
     [Header("Wall Slide")]
-    public float wallSlideSpeed = 0f; // 0 = duvarda neredeyse yapışık kalır
+    public float wallSlideSpeed = 0f;
 
     [Header("Checks")]
     public Transform groundCheck;
@@ -24,11 +24,26 @@ public class PlayerController : MonoBehaviour
     public Transform wallCheck;
     public float wallCheckRadius = 0.25f;
 
-    public LayerMask surfaceLayer; // Ground + Wall tek layer
+    public Transform headCheck;
+    public float headCheckRadius = 0.2f;
+
+    public LayerMask surfaceLayer;
 
     [Header("References")]
     public Rigidbody2D rb;
     public Animator animator;
+    public CapsuleCollider2D playerCollider;
+
+    [Header("Crouch Collider")]
+    public Vector2 crouchColliderSize = new Vector2(0.79f, 0.95f);
+    public Vector2 crouchColliderOffset = new Vector2(0.108f, -0.40f);
+
+    [Header("Roll Collider")]
+    public Vector2 rollColliderSize = new Vector2(0.79f, 0.85f);
+    public Vector2 rollColliderOffset = new Vector2(0.108f, -0.45f);
+
+    private Vector2 standColliderSize;
+    private Vector2 standColliderOffset;
 
     private float moveInput;
     private bool isGrounded;
@@ -41,14 +56,19 @@ public class PlayerController : MonoBehaviour
     private bool isDead;
 
     private float rollTimer;
-    private int facingDirection = 1; // 1 = sağ, -1 = sol
+    private int facingDirection = 1;
 
-    // Hesaplanan jump değerleri
     private float jumpVelocity;
     private float jumpHorizontalVelocity;
 
     void Start()
     {
+        if (playerCollider != null)
+        {
+            standColliderSize = playerCollider.size;
+            standColliderOffset = playerCollider.offset;
+        }
+
         CalculateJumpValues();
     }
 
@@ -66,6 +86,7 @@ public class PlayerController : MonoBehaviour
         HandleShield();
         HandleDeathDebug();
         HandleFacing();
+        UpdateCollider();
         UpdateAnimator();
     }
 
@@ -91,14 +112,11 @@ public class PlayerController : MonoBehaviour
 
         float gravity = Mathf.Abs(Physics2D.gravity.y * rb.gravityScale);
 
-        // 2.5 tile yukarı çıkmak için gereken ilk dikey hız
         jumpVelocity = Mathf.Sqrt(2f * gravity * jumpHeight);
 
-        // Aynı yükseklikte inen bir sıçramada toplam havada kalış süresi
         float timeToApex = jumpVelocity / gravity;
         float totalAirTime = timeToApex * 2f;
 
-        // 5 tile ileri gitmek için gereken yatay hız
         jumpHorizontalVelocity = jumpDistance / totalAirTime;
     }
 
@@ -108,7 +126,6 @@ public class PlayerController : MonoBehaviour
 
         bool touchingWall = Physics2D.OverlapCircle(wallCheck.position, wallCheckRadius, surfaceLayer);
 
-        // Yerde değilse ve yana temas varsa wall slide
         isWallSliding = !isGrounded && touchingWall;
     }
 
@@ -126,8 +143,51 @@ public class PlayerController : MonoBehaviour
     {
         moveInput = Input.GetAxisRaw("Horizontal");
 
-        isRunning = Input.GetKey(KeyCode.LeftShift) && Mathf.Abs(moveInput) > 0.1f && !isCrouching;
-        isCrouching = Input.GetKey(KeyCode.S) && isGrounded && !isRolling && !isShielding;
+        bool crouchPressed = Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow);
+
+        if (crouchPressed && isGrounded && !isRolling && !isShielding)
+        {
+            isCrouching = true;
+        }
+        else if (!crouchPressed)
+        {
+            if (CanStandUp())
+            {
+                isCrouching = false;
+            }
+        }
+
+        isRunning = Input.GetKey(KeyCode.LeftShift) && Mathf.Abs(moveInput) > 0.1f && !isCrouching && !isRolling;
+    }
+
+    bool CanStandUp()
+    {
+        if (headCheck == null)
+            return true;
+
+        return !Physics2D.OverlapCircle(headCheck.position, headCheckRadius, surfaceLayer);
+    }
+
+    void UpdateCollider()
+    {
+        if (playerCollider == null)
+            return;
+
+        if (isRolling)
+        {
+            playerCollider.size = rollColliderSize;
+            playerCollider.offset = rollColliderOffset;
+        }
+        else if (isCrouching)
+        {
+            playerCollider.size = crouchColliderSize;
+            playerCollider.offset = crouchColliderOffset;
+        }
+        else
+        {
+            playerCollider.size = standColliderSize;
+            playerCollider.offset = standColliderOffset;
+        }
     }
 
     void HandleMovement()
@@ -138,7 +198,6 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        // Duvarda yapışık kalırken normal movement uygulama
         if (isWallSliding)
         {
             rb.velocity = new Vector2(0f, rb.velocity.y);
@@ -159,10 +218,9 @@ public class PlayerController : MonoBehaviour
     {
         bool jumpPressed = Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.W);
 
-        if (!jumpPressed || isRolling || isShielding)
+        if (!jumpPressed || isRolling || isShielding || isCrouching)
             return;
 
-        // Ground jump
         if (isGrounded)
         {
             float horizontal = 0f;
@@ -175,10 +233,9 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        // Infinite wall jump
         if (isWallSliding)
         {
-            int jumpDirection = -facingDirection; // duvardan ters yöne zıpla
+            int jumpDirection = -facingDirection;
             rb.velocity = new Vector2(jumpDirection * jumpHorizontalVelocity, jumpVelocity);
             isWallSliding = false;
             animator.SetTrigger("Jump");
@@ -209,7 +266,7 @@ public class PlayerController : MonoBehaviour
     {
         bool attackPressed = Input.GetKeyDown(KeyCode.J) || Input.GetMouseButtonDown(0);
 
-        if (attackPressed && !isRolling && !isShielding && !isDead)
+        if (attackPressed && !isRolling && !isShielding && !isDead && !isCrouching)
         {
             int randomAttack = Random.Range(1, 4);
             animator.SetInteger("AttackIndex", randomAttack);
@@ -219,7 +276,7 @@ public class PlayerController : MonoBehaviour
 
     void HandleShield()
     {
-        isShielding = (Input.GetKey(KeyCode.K) || Input.GetMouseButton(1)) && !isRolling && !isDead;
+        isShielding = (Input.GetKey(KeyCode.K) || Input.GetMouseButton(1)) && !isRolling && !isDead && !isCrouching;
 
         if (isShielding)
         {
@@ -257,7 +314,6 @@ public class PlayerController : MonoBehaviour
 
     void HandleFacing()
     {
-        // Duvarda da karakter yön değiştirebilsin
         if (moveInput > 0.1f)
         {
             facingDirection = 1;
@@ -294,6 +350,12 @@ public class PlayerController : MonoBehaviour
         {
             Gizmos.color = Color.blue;
             Gizmos.DrawWireSphere(wallCheck.position, wallCheckRadius);
+        }
+
+        if (headCheck != null)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(headCheck.position, headCheckRadius);
         }
     }
 }
