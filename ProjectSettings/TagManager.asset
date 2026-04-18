@@ -3,41 +3,20 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
   tags:
-  - MovableBox
   - Ladder
->>>>>>> origin/main
-  tags: []
-=======
-  tags:
   - MovableBox
-  - Ladder
->>>>>>> Stashed changes
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
-  - 
+  - surface
   - Water
   - UI
   - 
->>>>>>> origin/main
-  - Ground
-=======
   - 
-  - Water
-  - UI
   - 
-  - Surface
->>>>>>> Stashed changes
-  - Water
-  - UI
+  - 
   - 
   - 
   - 
