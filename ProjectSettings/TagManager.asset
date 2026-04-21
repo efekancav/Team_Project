@@ -4,21 +4,16 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - MovableBox
   - Ladder
-  tags: []
+  - MovableBox
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - surface
   - Water
   - UI
   - 
-  - Ground
-  - Water
-  - UI
-  - Wall
   - 
   - 
   - 
