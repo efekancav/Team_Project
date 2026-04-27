@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Ladder
   - MovableBox
+  - Spike
   layers:
   - Default
   - TransparentFX
@@ -13,8 +14,8 @@ TagManager:
   - surface
   - Water
   - UI
-  - 
-  - 
+  - Player
+  - Enemy
   - 
   - 
   - 
