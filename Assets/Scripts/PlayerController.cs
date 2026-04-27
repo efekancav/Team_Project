@@ -6,25 +6,51 @@ public class PlayerController : MonoBehaviour
     public float walkSpeed = 4f;
     public float runSpeed = 7f;
     public float crouchSpeed = 2f;
-    public float jumpForce = 11f;
-    public float wallSlideSpeed = 2f;
     public float rollSpeed = 8f;
     public float rollDuration = 0.4f;
+
+    [Header("Jump Settings")]
+    public float jumpHeightInTiles = 2.5f;
+    public float jumpForwardDistanceInTiles = 5f;
+    public float tileSize = 1f;
+
+    [Header("Wall Slide")]
+    public float wallSlideSpeed = 0f;
+
+    [Header("Climb")]
+    public float climbSpeed = 3f;
 
     [Header("Checks")]
     public Transform groundCheck;
     public float groundCheckRadius = 0.2f;
-    public LayerMask groundLayer;
 
     public Transform wallCheck;
-    public float wallCheckRadius = 0.2f;
-    public LayerMask wallLayer;
+    public float wallCheckRadius = 0.25f;
+
+    public Transform headCheck;
+    public float headCheckRadius = 0.2f;
+
+    public LayerMask surfaceLayer;
 
     [Header("References")]
     public Rigidbody2D rb;
     public Animator animator;
+    public CapsuleCollider2D playerCollider;
+
+    [Header("Crouch Collider")]
+    public Vector2 crouchColliderSize = new Vector2(0.79f, 0.95f);
+    public Vector2 crouchColliderOffset = new Vector2(0.108f, -0.40f);
+
+    [Header("Roll Collider")]
+    public Vector2 rollColliderSize = new Vector2(0.79f, 0.85f);
+    public Vector2 rollColliderOffset = new Vector2(0.108f, -0.45f);
+
+    private Vector2 standColliderSize;
+    private Vector2 standColliderOffset;
 
     private float moveInput;
+    private float verticalInput;
+
     private bool isGrounded;
     private bool wasGrounded;
     private bool isRunning;
@@ -34,9 +60,27 @@ public class PlayerController : MonoBehaviour
     private bool isShielding;
     private bool isDead;
 
-    private bool canDoubleJump;
+    private bool isOnLadder;
+    private bool isClimbing;
+
     private float rollTimer;
-    private int facingDirection = 1; // 1 = right, -1 = left
+    private int facingDirection = 1;
+
+    private float jumpVelocity;
+    private float jumpHorizontalVelocity;
+    private float originalGravityScale;
+
+    void Start()
+    {
+        if (playerCollider != null)
+        {
+            standColliderSize = playerCollider.size;
+            standColliderOffset = playerCollider.offset;
+        }
+
+        originalGravityScale = rb.gravityScale;
+        CalculateJumpValues();
+    }
 
     void Update()
     {
@@ -52,6 +96,7 @@ public class PlayerController : MonoBehaviour
         HandleShield();
         HandleDeathDebug();
         HandleFacing();
+        UpdateCollider();
         UpdateAnimator();
     }
 
@@ -66,22 +111,33 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
+        HandleClimb();
         HandleMovement();
         HandleWallSlide();
     }
 
+    void CalculateJumpValues()
+    {
+        float jumpHeight = jumpHeightInTiles * tileSize;
+        float jumpDistance = jumpForwardDistanceInTiles * tileSize;
+
+        float gravity = Mathf.Abs(Physics2D.gravity.y * rb.gravityScale);
+
+        jumpVelocity = Mathf.Sqrt(2f * gravity * jumpHeight);
+
+        float timeToApex = jumpVelocity / gravity;
+        float totalAirTime = timeToApex * 2f;
+
+        jumpHorizontalVelocity = jumpDistance / totalAirTime;
+    }
+
     void CheckEnvironment()
     {
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, surfaceLayer);
 
-        bool touchingWall = Physics2D.OverlapCircle(wallCheck.position, wallCheckRadius, wallLayer);
+        bool touchingWall = Physics2D.OverlapCircle(wallCheck.position, wallCheckRadius, surfaceLayer);
 
-        isWallSliding = !isGrounded && touchingWall && rb.velocity.y < 0f && Mathf.Abs(moveInput) > 0.1f;
-
-        if (isGrounded)
-        {
-            canDoubleJump = true;
-        }
+        isWallSliding = !isGrounded && touchingWall && !isClimbing;
     }
 
     void HandleLanding()
@@ -97,14 +153,100 @@ public class PlayerController : MonoBehaviour
     void HandleInput()
     {
         moveInput = Input.GetAxisRaw("Horizontal");
+        verticalInput = Input.GetAxisRaw("Vertical");
 
-        isRunning = Input.GetKey(KeyCode.LeftShift) && Mathf.Abs(moveInput) > 0.1f && !isCrouching;
-        isCrouching = Input.GetKey(KeyCode.S) && isGrounded && !isRolling;
+        bool crouchPressed = Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow);
+
+        if (crouchPressed && isGrounded && !isRolling && !isShielding && !isClimbing)
+        {
+            isCrouching = true;
+        }
+        else if (!crouchPressed)
+        {
+            if (CanStandUp())
+            {
+                isCrouching = false;
+            }
+        }
+
+        isRunning = Input.GetKey(KeyCode.LeftShift) &&
+                    Mathf.Abs(moveInput) > 0.1f &&
+                    !isCrouching &&
+                    !isRolling &&
+                    !isClimbing;
+    }
+
+    bool CanStandUp()
+    {
+        if (headCheck == null)
+            return true;
+
+        return !Physics2D.OverlapCircle(headCheck.position, headCheckRadius, surfaceLayer);
+    }
+
+    void HandleClimb()
+    {
+        if (!isOnLadder)
+        {
+            isClimbing = false;
+            rb.gravityScale = originalGravityScale;
+            return;
+        }
+
+        if (Mathf.Abs(verticalInput) > 0.1f)
+        {
+            isClimbing = true;
+        }
+
+        if (isClimbing)
+        {
+            rb.gravityScale = 0f;
+            rb.velocity = new Vector2(0f, verticalInput * climbSpeed);
+
+            if (Mathf.Abs(verticalInput) < 0.1f)
+            {
+                rb.velocity = Vector2.zero;
+            }
+        }
+    }
+
+    void UpdateCollider()
+    {
+        if (playerCollider == null)
+            return;
+
+        if (isRolling)
+        {
+            playerCollider.size = rollColliderSize;
+            playerCollider.offset = rollColliderOffset;
+        }
+        else if (isCrouching)
+        {
+            playerCollider.size = crouchColliderSize;
+            playerCollider.offset = crouchColliderOffset;
+        }
+        else
+        {
+            playerCollider.size = standColliderSize;
+            playerCollider.offset = standColliderOffset;
+        }
     }
 
     void HandleMovement()
     {
+        if (isClimbing)
+        {
+            rb.velocity = new Vector2(0f, verticalInput * climbSpeed);
+            return;
+        }
+
         if (isShielding)
+        {
+            rb.velocity = new Vector2(0f, rb.velocity.y);
+            return;
+        }
+
+        if (isWallSliding)
         {
             rb.velocity = new Vector2(0f, rb.velocity.y);
             return;
@@ -124,32 +266,38 @@ public class PlayerController : MonoBehaviour
     {
         bool jumpPressed = Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.W);
 
-        if (!jumpPressed || isRolling || isShielding)
+        if (!jumpPressed || isRolling || isShielding || isCrouching || isClimbing)
             return;
 
         if (isGrounded)
         {
-            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+            float horizontal = 0f;
+
+            if (Mathf.Abs(moveInput) > 0.1f)
+                horizontal = Mathf.Sign(moveInput) * jumpHorizontalVelocity;
+
+            rb.velocity = new Vector2(horizontal, jumpVelocity);
             animator.SetTrigger("Jump");
+            return;
         }
-        else if (canDoubleJump && !isWallSliding)
+
+        if (isWallSliding)
         {
-            canDoubleJump = false;
-            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-            animator.SetTrigger("Jump");
-        }
-        else if (isWallSliding)
-        {
-            rb.velocity = new Vector2(-facingDirection * walkSpeed, jumpForce);
-            animator.SetTrigger("Jump");
+            int jumpDirection = -facingDirection;
+            rb.velocity = new Vector2(jumpDirection * jumpHorizontalVelocity, jumpVelocity);
             isWallSliding = false;
-            canDoubleJump = true;
+            animator.SetTrigger("Jump");
         }
     }
 
     void HandleRoll()
     {
-        if (Input.GetKeyDown(KeyCode.LeftControl) && isGrounded && !isRolling && !isCrouching && !isShielding)
+        if (Input.GetKeyDown(KeyCode.LeftControl) &&
+            isGrounded &&
+            !isRolling &&
+            !isCrouching &&
+            !isShielding &&
+            !isClimbing)
         {
             isRolling = true;
             rollTimer = rollDuration;
@@ -171,9 +319,14 @@ public class PlayerController : MonoBehaviour
     {
         bool attackPressed = Input.GetKeyDown(KeyCode.J) || Input.GetMouseButtonDown(0);
 
-        if (attackPressed && !isRolling && !isShielding && !isDead)
+        if (attackPressed &&
+            !isRolling &&
+            !isShielding &&
+            !isDead &&
+            !isCrouching &&
+            !isClimbing)
         {
-            int randomAttack = Random.Range(1, 4); // 1, 2, or 3
+            int randomAttack = Random.Range(1, 4);
             animator.SetInteger("AttackIndex", randomAttack);
             animator.SetTrigger("Attack");
         }
@@ -181,7 +334,11 @@ public class PlayerController : MonoBehaviour
 
     void HandleShield()
     {
-        isShielding = (Input.GetKey(KeyCode.K) || Input.GetMouseButton(1)) && !isRolling && !isDead;
+        isShielding = (Input.GetKey(KeyCode.K) || Input.GetMouseButton(1)) &&
+                      !isRolling &&
+                      !isDead &&
+                      !isCrouching &&
+                      !isClimbing;
 
         if (isShielding)
         {
@@ -195,7 +352,7 @@ public class PlayerController : MonoBehaviour
         {
             if (rb.velocity.y < -wallSlideSpeed)
             {
-                rb.velocity = new Vector2(rb.velocity.x, -wallSlideSpeed);
+                rb.velocity = new Vector2(0f, -wallSlideSpeed);
             }
         }
     }
@@ -213,12 +370,19 @@ public class PlayerController : MonoBehaviour
         isDead = true;
         isShielding = false;
         isRolling = false;
+        isClimbing = false;
+
         rb.velocity = Vector2.zero;
+        rb.gravityScale = originalGravityScale;
+
         animator.SetTrigger("Die");
     }
 
     void HandleFacing()
     {
+        if (isClimbing)
+            return;
+
         if (moveInput > 0.1f)
         {
             facingDirection = 1;
@@ -235,12 +399,32 @@ public class PlayerController : MonoBehaviour
     {
         animator.SetFloat("Speed", Mathf.Abs(moveInput));
         animator.SetFloat("YVelocity", rb.velocity.y);
+        animator.SetFloat("ClimbSpeed", Mathf.Abs(verticalInput));
 
         animator.SetBool("IsGrounded", isGrounded);
         animator.SetBool("IsRunning", isRunning);
         animator.SetBool("IsCrouching", isCrouching);
         animator.SetBool("IsWallSliding", isWallSliding);
         animator.SetBool("IsShielding", isShielding);
+        animator.SetBool("IsClimbing", isClimbing);
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Ladder"))
+        {
+            isOnLadder = true;
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Ladder"))
+        {
+            isOnLadder = false;
+            isClimbing = false;
+            rb.gravityScale = originalGravityScale;
+        }
     }
 
     void OnDrawGizmosSelected()
@@ -255,6 +439,12 @@ public class PlayerController : MonoBehaviour
         {
             Gizmos.color = Color.blue;
             Gizmos.DrawWireSphere(wallCheck.position, wallCheckRadius);
+        }
+
+        if (headCheck != null)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(headCheck.position, headCheckRadius);
         }
     }
 }
