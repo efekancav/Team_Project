@@ -26,10 +26,74 @@ public class PlayerHealth : MonoBehaviour
     private bool isDead = false;
     private bool isInvincible = false;
 
+    void Awake()
+    {
+        GetReferences();
+    }
+
     void Start()
+    {
+<<<<<<< Updated upstream
+        currentHealth = maxHealth;
+        currentLives = maxLives;
+=======
+        currentRespawnPoint = defaultRespawnPoint;
+        StartCoroutine(InitializeHealthRoutine());
+    }
+
+    IEnumerator InitializeHealthRoutine()
+    {
+        yield return null;
+
+        FindUIReferences();
+        ResetHealthAndLives();
+    }
+
+    void GetReferences()
+    {
+        if (rb == null)
+            rb = GetComponent<Rigidbody2D>();
+
+        if (animator == null)
+            animator = GetComponentInChildren<Animator>();
+
+        if (playerController == null)
+            playerController = GetComponent<PlayerController>();
+
+        if (playerSprite == null)
+            playerSprite = GetComponentInChildren<SpriteRenderer>();
+
+        if (playerSprite != null)
+            originalPlayerColor = playerSprite.color;
+    }
+
+    void FindUIReferences()
+    {
+        if (healthBarUI == null)
+            healthBarUI = FindObjectOfType<HealthBarUI>();
+
+        if (heartUI == null)
+            heartUI = FindObjectOfType<HeartUI>();
+    }
+
+    public void ResetHealthAndLives()
     {
         currentHealth = maxHealth;
         currentLives = maxLives;
+
+        isDead = false;
+        isInvincible = false;
+
+        if (playerController != null)
+            playerController.enabled = true;
+
+        if (rb != null)
+        {
+            rb.velocity = Vector2.zero;
+            rb.angularVelocity = 0f;
+        }
+
+>>>>>>> Stashed changes
         UpdateUI();
     }
 
@@ -87,6 +151,12 @@ public class PlayerHealth : MonoBehaviour
         }
         else
         {
+<<<<<<< Updated upstream
+=======
+            currentLives = 0;
+            UpdateUI();
+
+>>>>>>> Stashed changes
             Invoke(nameof(RestartLevel), respawnDelay);
         }
 
@@ -102,6 +172,7 @@ public class PlayerHealth : MonoBehaviour
 
         currentHealth = maxHealth;
         isDead = false;
+        isInvincible = false;
 
         if (rb != null)
         {
@@ -129,10 +200,49 @@ public class PlayerHealth : MonoBehaviour
         isInvincible = false;
     }
 
+<<<<<<< Updated upstream
     void UpdateUI()
     {
         Debug.Log("Health: " + currentHealth + " / " + maxHealth);
         Debug.Log("Lives: " + currentLives + " / " + maxLives);
+=======
+    IEnumerator DamageFlashRoutine()
+    {
+        if (playerSprite == null)
+            yield break;
+
+        playerSprite.color = damageFlashColor;
+
+        yield return new WaitForSeconds(damageFlashDuration);
+
+        playerSprite.color = originalPlayerColor;
+    }
+
+    void UpdateUI()
+    {
+        if (healthBarUI == null || heartUI == null)
+            FindUIReferences();
+
+        if (healthBarUI != null)
+            healthBarUI.SetHealth(currentHealth);
+
+        if (heartUI != null)
+            heartUI.UpdateHearts(currentLives);
+    }
+
+    bool HasAnimatorParameter(string parameterName)
+    {
+        if (animator == null)
+            return false;
+
+        foreach (AnimatorControllerParameter parameter in animator.parameters)
+        {
+            if (parameter.name == parameterName)
+                return true;
+        }
+
+        return false;
+>>>>>>> Stashed changes
     }
 
     public bool IsDead()
