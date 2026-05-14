@@ -4,13 +4,23 @@ using System.Collections;
 public class ExtendingLadder : MonoBehaviour
 {
     [Header("Ladder Setup")]
-    [Tooltip("Drag your hidden ladder pieces here in order, from TOP to BOTTOM.")]
     public GameObject[] ladderPieces;
 
-    [Tooltip("How many seconds does it take for one piece to slide down?")]
+    [Header("Settings")]
     public float dropSpeed = 0.15f;
 
     private bool isExtended = false;
+
+    private void Start()
+    {
+        for (int i = 0; i < ladderPieces.Length; i++)
+        {
+            if (ladderPieces[i] != null)
+            {
+                ladderPieces[i].SetActive(false);
+            }
+        }
+    }
 
     public void RollOut()
     {
@@ -28,35 +38,45 @@ public class ExtendingLadder : MonoBehaviour
         {
             GameObject piece = ladderPieces[i];
 
-            // 1. Remember the exact perfect spot where you vertex-snapped it
+            if (piece == null)
+                continue;
+
             Vector3 finalPosition = piece.transform.localPosition;
 
-            // 2. Automatically measure how tall the pixel art is
-            float pieceHeight = piece.GetComponent<SpriteRenderer>().bounds.size.y;
+            SpriteRenderer spriteRenderer = piece.GetComponent<SpriteRenderer>();
+            BoxCollider2D boxCollider = piece.GetComponent<BoxCollider2D>();
 
-            // 3. Move it UP so it is perfectly hiding behind the piece above it
-            Vector3 hiddenPosition = finalPosition + new Vector3(0, pieceHeight, 0);
+            float pieceHeight = 1f;
+
+            if (spriteRenderer != null)
+            {
+                pieceHeight = spriteRenderer.bounds.size.y;
+            }
+
+            Vector3 hiddenPosition = finalPosition + new Vector3(0f, pieceHeight, 0f);
+
             piece.transform.localPosition = hiddenPosition;
-
-            // 4. Turn it on (you won't see it yet because it's hiding!)
             piece.SetActive(true);
 
-            // 5. The Magic Math: Smoothly slide it down to its final position
+            if (boxCollider != null)
+            {
+                boxCollider.enabled = true;
+                boxCollider.isTrigger = true;
+            }
+
             float timer = 0f;
+
             while (timer < dropSpeed)
             {
-                // Time.deltaTime makes sure the animation is perfectly smooth on all computers
                 timer += Time.deltaTime;
+
                 float progress = timer / dropSpeed;
 
-                // Vector3.Lerp smoothly blends between the hidden spot and the final spot
                 piece.transform.localPosition = Vector3.Lerp(hiddenPosition, finalPosition, progress);
 
-                // Pause the code until the next frame of the game is drawn
                 yield return null;
             }
 
-            // 6. Ensure it snaps exactly to your perfect position at the end
             piece.transform.localPosition = finalPosition;
         }
     }

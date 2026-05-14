@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 7612685132557061142}
   - component: {fileID: 7155393452122323330}
   - component: {fileID: 5300722590739976327}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: MovableBlock
-  m_TagString: Untagged
+  m_TagString: MovableBox
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
