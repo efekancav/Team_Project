@@ -27,6 +27,7 @@ public class LocalTeleport : MonoBehaviour
         // 1. Get components
         var moveScript = player.GetComponent<MonoBehaviour>();
         var sr = player.GetComponent<SpriteRenderer>();
+        var rb = player.GetComponent<Rigidbody2D>(); // <-- NEW: Fetch the physics body
         Vector3 originalScale = player.localScale;
 
         // 2. Freeze & Go "Inside" (Behind door)
@@ -46,6 +47,13 @@ public class LocalTeleport : MonoBehaviour
         // 4. Move to Destination
         player.position = destination.position;
 
+        //The Bullet/Gravity Fix ---
+        if (rb != null)
+        {
+            // Force speed to zero so she doesn't carry falling momentum through the door
+            rb.velocity = Vector2.zero;
+        }
+   
         // 5. Grow Animation
         timer = 0;
         while (timer < animationSpeed)

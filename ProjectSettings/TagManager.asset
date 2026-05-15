@@ -6,10 +6,14 @@ TagManager:
   tags:
   - Ladder
   - MovableBox
+<<<<<<< Updated upstream
+=======
   - Spike
   - MovableBox
   - Ladder
   - Enemy
+  - Hazard
+>>>>>>> Stashed changes
   layers:
   - Default
   - TransparentFX
@@ -17,8 +21,8 @@ TagManager:
   - surface
   - Water
   - UI
-  - Player
-  - Enemy
+  - 
+  - 
   - 
   - 
   - 
@@ -46,10 +50,4 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
-    locked: 0
-  - name: Foreground
-    uniqueID: 2557288175
-    locked: 0
-  - name: Characters
-    uniqueID: 1514203663
     locked: 0
