@@ -20,16 +20,20 @@ public class PlayerController : MonoBehaviour
     [Header("Climb")]
     public float climbSpeed = 3f;
 
+    [Header("Player Attack")]
+    public Transform attackPoint;
+    public float attackRadius = 0.5f;
+    public float attackDamage = 25f;
+    public LayerMask enemyLayer;
+    public float attackHitDelay = 0.25f;
+
     [Header("Checks")]
     public Transform groundCheck;
     public float groundCheckRadius = 0.2f;
-
     public Transform wallCheck;
     public float wallCheckRadius = 0.25f;
-
     public Transform headCheck;
     public float headCheckRadius = 0.2f;
-
     public LayerMask surfaceLayer;
 
     [Header("References")]
@@ -38,8 +42,8 @@ public class PlayerController : MonoBehaviour
     public CapsuleCollider2D playerCollider;
 
     [Header("Crouch Collider")]
-    public Vector2 crouchColliderSize = new Vector2(0.79f, 0.95f);
-    public Vector2 crouchColliderOffset = new Vector2(0.108f, -0.40f);
+    public Vector2 crouchColliderSize = new Vector2(0.55f, 0.35f);
+    public Vector2 crouchColliderOffset = new Vector2(0.108f, -0.45f);
 
     [Header("Roll Collider")]
     public Vector2 rollColliderSize = new Vector2(0.79f, 0.85f);
@@ -63,6 +67,9 @@ public class PlayerController : MonoBehaviour
     private bool isOnLadder;
     private bool isClimbing;
 
+    private bool isInDropZone;
+    private float dropMaxFallSpeed;
+
     private float rollTimer;
     private int facingDirection = 1;
 
@@ -72,6 +79,15 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+        if (rb == null)
+            rb = GetComponent<Rigidbody2D>();
+
+        if (animator == null)
+            animator = GetComponentInChildren<Animator>();
+
+        if (playerCollider == null)
+            playerCollider = GetComponent<CapsuleCollider2D>();
+
         if (playerCollider != null)
         {
             standColliderSize = playerCollider.size;
@@ -79,13 +95,13 @@ public class PlayerController : MonoBehaviour
         }
 
         originalGravityScale = rb.gravityScale;
+
         CalculateJumpValues();
     }
 
     void Update()
     {
-        if (isDead)
-            return;
+        if (isDead) return;
 
         CheckEnvironment();
         HandleLanding();
@@ -102,8 +118,7 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (isDead)
-            return;
+        if (isDead) return;
 
         if (isRolling)
         {
@@ -114,13 +129,13 @@ public class PlayerController : MonoBehaviour
         HandleClimb();
         HandleMovement();
         HandleWallSlide();
+        HandleDropZone();
     }
 
     void CalculateJumpValues()
     {
         float jumpHeight = jumpHeightInTiles * tileSize;
         float jumpDistance = jumpForwardDistanceInTiles * tileSize;
-
         float gravity = Mathf.Abs(Physics2D.gravity.y * rb.gravityScale);
 
         jumpVelocity = Mathf.Sqrt(2f * gravity * jumpHeight);
@@ -134,7 +149,6 @@ public class PlayerController : MonoBehaviour
     void CheckEnvironment()
     {
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, surfaceLayer);
-
         bool touchingWall = Physics2D.OverlapCircle(wallCheck.position, wallCheckRadius, surfaceLayer);
 
         isWallSliding = !isGrounded && touchingWall && !isClimbing;
@@ -189,7 +203,10 @@ public class PlayerController : MonoBehaviour
         if (!isOnLadder)
         {
             isClimbing = false;
-            rb.gravityScale = originalGravityScale;
+
+            if (!isInDropZone)
+                rb.gravityScale = originalGravityScale;
+
             return;
         }
 
@@ -201,34 +218,6 @@ public class PlayerController : MonoBehaviour
         if (isClimbing)
         {
             rb.gravityScale = 0f;
-            rb.velocity = new Vector2(0f, verticalInput * climbSpeed);
-
-            if (Mathf.Abs(verticalInput) < 0.1f)
-            {
-                rb.velocity = Vector2.zero;
-            }
-        }
-    }
-
-    void UpdateCollider()
-    {
-        if (playerCollider == null)
-            return;
-
-        if (isRolling)
-        {
-            playerCollider.size = rollColliderSize;
-            playerCollider.offset = rollColliderOffset;
-        }
-        else if (isCrouching)
-        {
-            playerCollider.size = crouchColliderSize;
-            playerCollider.offset = crouchColliderOffset;
-        }
-        else
-        {
-            playerCollider.size = standColliderSize;
-            playerCollider.offset = standColliderOffset;
         }
     }
 
@@ -236,7 +225,13 @@ public class PlayerController : MonoBehaviour
     {
         if (isClimbing)
         {
-            rb.velocity = new Vector2(0f, verticalInput * climbSpeed);
+            rb.velocity = new Vector2(moveInput * walkSpeed, verticalInput * climbSpeed);
+
+            if (Mathf.Abs(verticalInput) < 0.1f && Mathf.Abs(moveInput) < 0.1f)
+            {
+                rb.velocity = Vector2.zero;
+            }
+
             return;
         }
 
@@ -329,6 +324,26 @@ public class PlayerController : MonoBehaviour
             int randomAttack = Random.Range(1, 4);
             animator.SetInteger("AttackIndex", randomAttack);
             animator.SetTrigger("Attack");
+
+            Invoke(nameof(DealAttackDamage), attackHitDelay);
+        }
+    }
+
+    void DealAttackDamage()
+    {
+        if (attackPoint == null)
+            return;
+
+        Collider2D[] hits = Physics2D.OverlapCircleAll(attackPoint.position, attackRadius, enemyLayer);
+
+        foreach (Collider2D hit in hits)
+        {
+            EnemyAI enemy = hit.GetComponentInParent<EnemyAI>();
+
+            if (enemy != null)
+            {
+                enemy.TakeDamage(attackDamage);
+            }
         }
     }
 
@@ -357,6 +372,34 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    void HandleDropZone()
+    {
+        if (!isInDropZone)
+            return;
+
+        if (rb.velocity.y < dropMaxFallSpeed)
+        {
+            rb.velocity = new Vector2(rb.velocity.x, dropMaxFallSpeed);
+        }
+    }
+
+    public void EnterDropZone(float gravity, float maxFall)
+    {
+        isInDropZone = true;
+        dropMaxFallSpeed = maxFall;
+
+        if (!isClimbing)
+            rb.gravityScale = gravity;
+    }
+
+    public void ExitDropZone()
+    {
+        isInDropZone = false;
+
+        if (!isClimbing)
+            rb.gravityScale = originalGravityScale;
+    }
+
     void HandleDeathDebug()
     {
         if (Input.GetKeyDown(KeyCode.P))
@@ -380,9 +423,6 @@ public class PlayerController : MonoBehaviour
 
     void HandleFacing()
     {
-        if (isClimbing)
-            return;
-
         if (moveInput > 0.1f)
         {
             facingDirection = 1;
@@ -393,6 +433,29 @@ public class PlayerController : MonoBehaviour
             facingDirection = -1;
             transform.localScale = new Vector3(-1, 1, 1);
         }
+    }
+
+    void UpdateCollider()
+    {
+        if (playerCollider == null)
+            return;
+
+        if (isRolling)
+        {
+            playerCollider.size = rollColliderSize;
+            playerCollider.offset = rollColliderOffset;
+            return;
+        }
+
+        if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
+        {
+            playerCollider.size = crouchColliderSize;
+            playerCollider.offset = crouchColliderOffset;
+            return;
+        }
+
+        playerCollider.size = standColliderSize;
+        playerCollider.offset = standColliderOffset;
     }
 
     void UpdateAnimator()
@@ -423,7 +486,9 @@ public class PlayerController : MonoBehaviour
         {
             isOnLadder = false;
             isClimbing = false;
-            rb.gravityScale = originalGravityScale;
+
+            if (!isInDropZone)
+                rb.gravityScale = originalGravityScale;
         }
     }
 
@@ -445,6 +510,12 @@ public class PlayerController : MonoBehaviour
         {
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(headCheck.position, headCheckRadius);
+        }
+
+        if (attackPoint != null)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(attackPoint.position, attackRadius);
         }
     }
 }

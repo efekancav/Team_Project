@@ -37,6 +37,7 @@ Transform:
   - {fileID: 8132172953516450885}
   - {fileID: 7833197839789280049}
   - {fileID: 8771264597056946408}
+  - {fileID: 6271157912476673188}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7711399011413898574
@@ -55,11 +56,17 @@ MonoBehaviour:
   currentHealth: 0
   maxLives: 3
   currentLives: 0
-  respawnPoint: {fileID: 0}
+  healthBarUI: {fileID: 0}
+  heartUI: {fileID: 0}
+  playerSprite: {fileID: 3009198770660449070}
+  damageFlashColor: {r: 1, g: 1, b: 1, a: 1}
+  damageFlashDuration: 0.12
+  defaultRespawnPoint: {fileID: 0}
   respawnDelay: 1
   invincibleDuration: 2
   rb: {fileID: 814339752231345501}
   animator: {fileID: 7820205783757889601}
+  playerController: {fileID: 2815487709452825733}
 --- !u!114 &2815487709452825733
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -82,6 +89,13 @@ MonoBehaviour:
   tileSize: 1
   wallSlideSpeed: 2
   climbSpeed: 3
+  attackPoint: {fileID: 6271157912476673188}
+  attackRadius: 0.5
+  attackDamage: 25
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  attackHitDelay: 0.25
   groundCheck: {fileID: 8132172953516450885}
   groundCheckRadius: 0.2
   wallCheck: {fileID: 7833197839789280049}
@@ -262,9 +276,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingLayerID: 1514203663
+  m_SortingLayer: 2
+  m_SortingOrder: 10
   m_Sprite: {fileID: 1612461891, guid: 39cc30042785e744692816633a0f9b9b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -323,6 +337,37 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.612, y: -0.66, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4063543857703866323}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &6411210973192841234
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6271157912476673188}
+  m_Layer: 0
+  m_Name: AttackPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6271157912476673188
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6411210973192841234}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.56, y: -0.272, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
