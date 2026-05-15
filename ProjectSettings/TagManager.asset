@@ -7,6 +7,8 @@ TagManager:
   - Ladder
   - MovableBox
   - Spike
+  - MovableBox
+  - Ladder
   - Enemy
   layers:
   - Default
