@@ -9,11 +9,6 @@ public class HealthBarUI : MonoBehaviour
 
     public float fullWidth = 180f;
 
-    private void Start()
-    {
-        SetHealth(currentHealth);
-    }
-
     public void SetHealth(float newHealth)
     {
         currentHealth = Mathf.Clamp(newHealth, 0f, maxHealth);

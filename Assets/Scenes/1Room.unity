@@ -368,11 +368,22 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
+<<<<<<< Updated upstream
     y: 0
+<<<<<<< HEAD
+    width: 2.7455196
+    height: 1.4158164
+=======
+    y: 0.0020242915
+    width: 0.9995436
+    height: 0.9959514
+>>>>>>> Stashed changes
+=======
     width: 1
     height: 1
     width: 0.9995436
     height: 0.9991673
+>>>>>>> main
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 34
@@ -402,8 +413,16 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+<<<<<<< HEAD
+<<<<<<< Updated upstream
+  m_LocalPosition: {x: -0.67538023, y: -0.9830998, z: -10}
+=======
+  m_LocalPosition: {x: -0.6802845, y: -0.58268636, z: -10.006794}
+>>>>>>> Stashed changes
+=======
   m_LocalPosition: {x: -2.8517032, y: -0.4694109, z: -10.006794}
   m_LocalPosition: {x: -0.50233555, y: -0.57846206, z: -10.006794}
+>>>>>>> main
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7534,6 +7553,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lastRoom1Position: {x: 0, y: 0, z: 0}
   hasStoredPosition: 0
+  keysCollected: 0
 --- !u!4 &1855639902
 Transform:
   m_ObjectHideFlags: 0
@@ -7637,6 +7657,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac0b09e7857660247b1477e93731de29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+<<<<<<< HEAD
+<<<<<<< Updated upstream
+=======
+=======
+>>>>>>> main
 --- !u!114 &2080938564 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8727032995552451327, guid: d2c0ecc4915e57549951c58c45030b72, type: 3}
@@ -7762,6 +7787,9 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 135458276776da547a3f1a432b1c96eb, type: 3}
+<<<<<<< HEAD
+>>>>>>> Stashed changes
+=======
 --- !u!1001 &5661446089905881962
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7934,6 +7962,7 @@ PrefabInstance:
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8139df8a59ce7574aab6f4da6d97b26f, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 036d1033622108a4eaa24b17af79c23a, type: 3}
+>>>>>>> main
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -7947,6 +7976,11 @@ SceneRoots:
   - {fileID: 1452471128}
   - {fileID: 567677592}
   - {fileID: 1855639902}
+<<<<<<< HEAD
+<<<<<<< Updated upstream
+=======
+  - {fileID: 956225307}
+=======
   - {fileID: 956225307}
   - {fileID: 2058868144}
   - {fileID: 2701929337103184646}
@@ -7954,7 +7988,12 @@ SceneRoots:
   - {fileID: 5661446089905881962}
   - {fileID: 8013568957633718524}
   - {fileID: 6075744687240448972}
+>>>>>>> main
   - {fileID: 1095942868}
   - {fileID: 2777511776291286068}
   - {fileID: 1401654246}
   - {fileID: 70489693}
+<<<<<<< HEAD
+>>>>>>> Stashed changes
+=======
+>>>>>>> main
