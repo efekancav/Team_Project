@@ -4,27 +4,39 @@ using UnityEngine.SceneManagement;
 
 public class PlayerHealth : MonoBehaviour
 {
-    [Header("Health Settings")]
+    [Header("Health")]
     public int maxHealth = 100;
     public int currentHealth;
 
-    [Header("Lives Settings")]
+    [Header("Lives")]
     public int maxLives = 3;
     public int currentLives;
 
-    [Header("Respawn Settings")]
-    public Transform respawnPoint;
-    public float respawnDelay = 1f;
+    [Header("UI")]
+    public HealthBarUI healthBarUI;
+    public HeartUI heartUI;
 
-    [Header("Invincibility Settings")]
+    [Header("Damage Flash")]
+    public SpriteRenderer playerSprite;
+    public Color damageFlashColor = Color.white;
+    public float damageFlashDuration = 0.12f;
+
+    [Header("Respawn")]
+    public Transform defaultRespawnPoint;
+    public float respawnDelay = 1.5f;
+
+    [Header("Invincibility")]
     public float invincibleDuration = 1f;
 
     [Header("References")]
     public Rigidbody2D rb;
     public Animator animator;
+    public PlayerController playerController;
 
-    private bool isDead = false;
-    private bool isInvincible = false;
+    private bool isDead;
+    private bool isInvincible;
+    private Color originalPlayerColor;
+    private Transform currentRespawnPoint;
 
     void Awake()
     {
@@ -33,10 +45,6 @@ public class PlayerHealth : MonoBehaviour
 
     void Start()
     {
-<<<<<<< Updated upstream
-        currentHealth = maxHealth;
-        currentLives = maxLives;
-=======
         currentRespawnPoint = defaultRespawnPoint;
         StartCoroutine(InitializeHealthRoutine());
     }
@@ -93,7 +101,6 @@ public class PlayerHealth : MonoBehaviour
             rb.angularVelocity = 0f;
         }
 
->>>>>>> Stashed changes
         UpdateUI();
     }
 
@@ -103,18 +110,24 @@ public class PlayerHealth : MonoBehaviour
             return;
 
         currentHealth -= damage;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+
+        UpdateUI();
+
+        if (playerSprite != null)
+            StartCoroutine(DamageFlashRoutine());
 
         if (currentHealth <= 0)
         {
-            currentHealth = 0;
             Die();
         }
         else
         {
-            StartCoroutine(InvincibilityCoroutine());
-        }
+            if (HasAnimatorParameter("Hit"))
+                animator.SetTrigger("Hit");
 
-        UpdateUI();
+            StartCoroutine(InvincibilityRoutine());
+        }
     }
 
     public void Heal(int amount)
@@ -123,89 +136,95 @@ public class PlayerHealth : MonoBehaviour
             return;
 
         currentHealth += amount;
-
-        if (currentHealth > maxHealth)
-            currentHealth = maxHealth;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
         UpdateUI();
     }
 
     void Die()
     {
-        isDead = true;
+        if (isDead)
+            return;
 
-        if (animator != null)
-        {
-            animator.SetTrigger("Die");
-        }
+        isDead = true;
+        isInvincible = true;
+
+        StopAllCoroutines();
+
+        if (playerController != null)
+            playerController.enabled = false;
 
         if (rb != null)
         {
             rb.velocity = Vector2.zero;
+            rb.angularVelocity = 0f;
         }
 
-        if (currentLives > 0)
+        if (HasAnimatorParameter("Die"))
+            animator.SetTrigger("Die");
+
+        currentLives--;
+
+        if (currentLives <= 0)
         {
-            currentLives--;
-            Invoke(nameof(Respawn), respawnDelay);
-        }
-        else
-        {
-<<<<<<< Updated upstream
-=======
             currentLives = 0;
             UpdateUI();
 
->>>>>>> Stashed changes
             Invoke(nameof(RestartLevel), respawnDelay);
+            return;
         }
 
         UpdateUI();
+        Invoke(nameof(Respawn), respawnDelay);
     }
 
     void Respawn()
     {
-        if (respawnPoint != null)
+        if (currentRespawnPoint != null)
         {
-            transform.position = respawnPoint.position;
+            transform.position = currentRespawnPoint.position;
+        }
+        else if (defaultRespawnPoint != null)
+        {
+            transform.position = defaultRespawnPoint.position;
         }
 
         currentHealth = maxHealth;
         isDead = false;
         isInvincible = false;
 
+        if (animator != null)
+        {
+            animator.Rebind();
+            animator.Update(0f);
+        }
+
         if (rb != null)
         {
             rb.velocity = Vector2.zero;
+            rb.angularVelocity = 0f;
         }
 
-        StartCoroutine(InvincibilityCoroutine());
+        if (playerController != null)
+            playerController.enabled = true;
+
         UpdateUI();
+
+        StartCoroutine(InvincibilityRoutine());
     }
 
     void RestartLevel()
     {
-        currentLives = maxLives;
-        currentHealth = maxHealth;
-
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    IEnumerator InvincibilityCoroutine()
+    IEnumerator InvincibilityRoutine()
     {
         isInvincible = true;
-
         yield return new WaitForSeconds(invincibleDuration);
-
         isInvincible = false;
     }
 
-<<<<<<< Updated upstream
-    void UpdateUI()
-    {
-        Debug.Log("Health: " + currentHealth + " / " + maxHealth);
-        Debug.Log("Lives: " + currentLives + " / " + maxLives);
-=======
     IEnumerator DamageFlashRoutine()
     {
         if (playerSprite == null)
@@ -242,7 +261,6 @@ public class PlayerHealth : MonoBehaviour
         }
 
         return false;
->>>>>>> Stashed changes
     }
 
     public bool IsDead()
@@ -250,13 +268,8 @@ public class PlayerHealth : MonoBehaviour
         return isDead;
     }
 
-    public int GetCurrentHealth()
+    public void SetRespawnPoint(Transform newRespawnPoint)
     {
-        return currentHealth;
-    }
-
-    public int GetCurrentLives()
-    {
-        return currentLives;
+        currentRespawnPoint = newRespawnPoint;
     }
 }
