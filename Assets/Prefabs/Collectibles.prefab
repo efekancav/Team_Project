@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7846017634115387826}
   - component: {fileID: 3872999664993151020}
-  - component: {fileID: 2756050860453268291}
+  - component: {fileID: 5137678880640631929}
   - component: {fileID: 38315921377634005}
   - component: {fileID: 9204070528581833158}
   m_Layer: 0
@@ -139,7 +139,7 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
---- !u!114 &2756050860453268291
+--- !u!114 &5137678880640631929
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -148,10 +148,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 8048091147369546987}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 72ed524d3a6139b458ec741ebc14c52d, type: 3}
+  m_Script: {fileID: 11500000, guid: 2178df36166d02144ac5f5542b3bb898, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  diamondValue: 1
+  collectibleType: 1
+  value: 1
   collectEffect: {fileID: 5042525022304533085, guid: 7784d65dd45b7d24d97bd60a126e7862, type: 3}
 --- !u!483693784 &38315921377634005
 TilemapRenderer:

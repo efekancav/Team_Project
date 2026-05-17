@@ -6,6 +6,7 @@ public class Key : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
+            // Eski sistemi bozmayalım
             // проиграть звук
             SFXManager.Instance.PlaySFX(
                 SFXManager.Instance.collect
@@ -14,6 +15,12 @@ public class Key : MonoBehaviour
             GameManager.Instance.keysCollected++;
 
             Debug.Log("Keys collected! Total: " + GameManager.Instance.keysCollected);
+
+            // Yeni Collectible UI sistemi
+            if (CollectibleManager.instance != null)
+            {
+                CollectibleManager.instance.AddCollectible(1);
+            }
 
             Destroy(gameObject);
         }
