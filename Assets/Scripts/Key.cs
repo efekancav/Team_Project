@@ -6,8 +6,15 @@ public class Key : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
+            // Eski sistemi bozmayalım
             GameManager.Instance.keysCollected++;
             Debug.Log("Ключ подобран! Всего: " + GameManager.Instance.keysCollected);
+
+            // Yeni Collectible UI sistemi
+            if (CollectibleManager.instance != null)
+            {
+                CollectibleManager.instance.AddCollectible(1);
+            }
 
             Destroy(gameObject);
         }

@@ -15,6 +15,7 @@ public class PlayerHealth : MonoBehaviour
     [Header("UI")]
     public HealthBarUI healthBarUI;
     public HeartUI heartUI;
+    public DeathMenu deathMenu;
 
     [Header("Damage Flash")]
     public SpriteRenderer playerSprite;
@@ -82,6 +83,9 @@ public class PlayerHealth : MonoBehaviour
 
         if (heartUI == null)
             heartUI = FindObjectOfType<HeartUI>();
+
+        if (deathMenu == null)
+            deathMenu = FindObjectOfType<DeathMenu>();
     }
 
     public void ResetHealthAndLives()
@@ -170,7 +174,18 @@ public class PlayerHealth : MonoBehaviour
             currentLives = 0;
             UpdateUI();
 
-            Invoke(nameof(RestartLevel), respawnDelay);
+            if (deathMenu == null)
+                FindUIReferences();
+
+            if (deathMenu != null)
+            {
+                Invoke(nameof(ShowDeathScreen), respawnDelay);
+            }
+            else
+            {
+                Invoke(nameof(RestartLevel), respawnDelay);
+            }
+
             return;
         }
 
@@ -213,6 +228,12 @@ public class PlayerHealth : MonoBehaviour
         StartCoroutine(InvincibilityRoutine());
     }
 
+    void ShowDeathScreen()
+    {
+        if (deathMenu != null)
+            deathMenu.ShowDeathPanel();
+    }
+
     void RestartLevel()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
@@ -239,7 +260,7 @@ public class PlayerHealth : MonoBehaviour
 
     void UpdateUI()
     {
-        if (healthBarUI == null || heartUI == null)
+        if (healthBarUI == null || heartUI == null || deathMenu == null)
             FindUIReferences();
 
         if (healthBarUI != null)
