@@ -108,6 +108,10 @@ public class PlayerHealth : MonoBehaviour
     {
         if (isDead || isInvincible)
             return;
+        
+        SFXManager.Instance.PlaySFX(
+            SFXManager.Instance.damage
+        );
 
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);

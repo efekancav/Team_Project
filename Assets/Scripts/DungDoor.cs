@@ -52,7 +52,10 @@ public class DungDoor : MonoBehaviour
             }
             else
             {
-                // 👉 ПЕРЕХОД НА ДРУГУЮ СЦЕНУ
+                SFXManager.Instance.PlaySFX(
+                    SFXManager.Instance.levelFinish
+                );
+                // teleport to another scene
                 SceneManager.LoadScene(sceneToLoad);
             }
         }

@@ -27,7 +27,12 @@ public class SceneTrigger : MonoBehaviour
 
     IEnumerator LoadSceneWithDelay()
     {
+        SFXManager.Instance.PlaySFX(
+            SFXManager.Instance.levelFinish
+        );
+
         yield return new WaitForSeconds(delayInSeconds);
+
         SceneManager.LoadScene(sceneToLoad);
     }
 }
