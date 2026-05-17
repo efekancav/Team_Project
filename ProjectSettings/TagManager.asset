@@ -6,9 +6,9 @@ TagManager:
   tags:
   - Ladder
   - MovableBox
-<<<<<<< Updated upstream
-=======
   - Spike
+  - MovableBox
+  - Ladder
   - Enemy
   - Hazard
   - Ladder
@@ -20,6 +20,9 @@ TagManager:
   - surface
   - Water
   - UI
+  - Player
+  - Enemy
+  - Spike
   - 
   - 
   - 

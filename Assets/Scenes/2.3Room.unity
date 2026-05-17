@@ -708,9 +708,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0
+    y: 0.0022624435
     width: 0.9995436
-    height: 0.99730456
+    height: 0.9954752
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 34
@@ -740,7 +740,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.9298239, y: 1.4767165, z: -10.006794}
+  m_LocalPosition: {x: -1.8581295, y: 1.478612, z: -10.006794}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -17624,9 +17624,9 @@ GameObject:
   - component: {fileID: 1744558227}
   - component: {fileID: 1744558226}
   - component: {fileID: 1744558225}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Spikes
-  m_TagString: Untagged
+  m_TagString: Spike
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -18693,7 +18693,7 @@ GameObject:
   - component: {fileID: 2085921566}
   - component: {fileID: 2085921565}
   - component: {fileID: 2085921564}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Poison
   m_TagString: Untagged
   m_Icon: {fileID: 0}
