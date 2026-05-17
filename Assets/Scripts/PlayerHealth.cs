@@ -128,6 +128,13 @@ public class PlayerHealth : MonoBehaviour
 
             StartCoroutine(InvincibilityRoutine());
         }
+
+        // Find the Ascent Manager in the scene and abort the flight
+        AscentManager flightManager = FindObjectOfType<AscentManager>();
+        if (flightManager != null)
+        {
+            flightManager.AbortFlight();
+        }
     }
 
     public void Heal(int amount)

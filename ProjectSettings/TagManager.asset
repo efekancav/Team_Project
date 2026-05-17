@@ -11,6 +11,8 @@ TagManager:
   - Ladder
   - Enemy
   - Hazard
+  - Ladder
+  - Spike
   layers:
   - Default
   - TransparentFX
@@ -48,6 +50,30 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Background_Sky
+    uniqueID: 372146587
+    locked: 0
+  - name: Background_Clouds
+    uniqueID: 2672602299
+    locked: 0
+  - name: Background_Mountains
+    uniqueID: 1356687643
+    locked: 0
+  - name: Background_Hills
+    uniqueID: 3932363161
+    locked: 0
+  - name: Background_Hills2
+    uniqueID: 2880334553
+    locked: 0
+  - name: DecBack
+    uniqueID: 3319841163
+    locked: 0
+  - name: DecForeground
+    uniqueID: 3872387673
+    locked: 0
+  - name: Ground
+    uniqueID: 3453334109
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0
