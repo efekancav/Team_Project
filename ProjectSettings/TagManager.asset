@@ -17,7 +17,7 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - surface
+  - 
   - Water
   - UI
   - Player
@@ -29,10 +29,7 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
-  - 
-  - 
+  - surface
   - 
   - 
   - 
