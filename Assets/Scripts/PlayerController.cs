@@ -357,7 +357,8 @@ public class PlayerController : MonoBehaviour
 
             if (enemy != null)
             {
-                enemy.TakeDamage(attackDamage);
+                Vector2 knockDir = (hit.transform.position - transform.position).normalized;
+                enemy.TakeDamage(attackDamage, knockDir);
             }
         }
     }

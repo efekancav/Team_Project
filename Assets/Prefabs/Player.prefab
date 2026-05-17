@@ -94,7 +94,7 @@ MonoBehaviour:
   attackDamage: 25
   enemyLayer:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 0
   attackHitDelay: 0.25
   groundCheck: {fileID: 8132172953516450885}
   groundCheckRadius: 0.2
@@ -277,7 +277,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1514203663
-  m_SortingLayer: 2
+  m_SortingLayer: 0
   m_SortingOrder: 10
   m_Sprite: {fileID: 1612461891, guid: 39cc30042785e744692816633a0f9b9b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
