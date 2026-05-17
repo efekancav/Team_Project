@@ -50,4 +50,16 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/9Room.unity
     guid: 7b723c8dc51cde548bff0697f2939806
+  - enabled: 1
+    path: Assets/Scenes/Grass1Room.unity
+    guid: 38e9a7ec364943c4fbf861615863c0c9
+  - enabled: 1
+    path: Assets/Scenes/Grass2.3.4.5Room.unity
+    guid: 90ea4a65c38c0174c82b561c4ac129d0
+  - enabled: 1
+    path: Assets/Scenes/Grass6.7Room.unity
+    guid: bf0e1ecea5538f7468290aef05236949
+  - enabled: 1
+    path: Assets/Scenes/Grass8Room.unity
+    guid: 027ce7a46efaf3443866b7b62dd1bbe1
   m_configObjects: {}
