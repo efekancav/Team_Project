@@ -272,6 +272,11 @@ public class PlayerController : MonoBehaviour
                 horizontal = Mathf.Sign(moveInput) * jumpHorizontalVelocity;
 
             rb.velocity = new Vector2(horizontal, jumpVelocity);
+
+            SFXManager.Instance.PlaySFX(
+                SFXManager.Instance.jump //jumpSound
+            );
+
             animator.SetTrigger("Jump");
             return;
         }
@@ -281,6 +286,11 @@ public class PlayerController : MonoBehaviour
             int jumpDirection = -facingDirection;
             rb.velocity = new Vector2(jumpDirection * jumpHorizontalVelocity, jumpVelocity);
             isWallSliding = false;
+
+            SFXManager.Instance.PlaySFX(
+                SFXManager.Instance.jump //jumpSound
+            );
+
             animator.SetTrigger("Jump");
         }
     }
@@ -323,6 +333,11 @@ public class PlayerController : MonoBehaviour
         {
             int randomAttack = Random.Range(1, 4);
             animator.SetInteger("AttackIndex", randomAttack);
+
+            SFXManager.Instance.PlaySFX(
+                SFXManager.Instance.hit
+            );
+
             animator.SetTrigger("Attack");
 
             Invoke(nameof(DealAttackDamage), attackHitDelay);
@@ -342,7 +357,8 @@ public class PlayerController : MonoBehaviour
 
             if (enemy != null)
             {
-                enemy.TakeDamage(attackDamage);
+                Vector2 knockDir = (hit.transform.position - transform.position).normalized;
+                enemy.TakeDamage(attackDamage, knockDir);
             }
         }
     }

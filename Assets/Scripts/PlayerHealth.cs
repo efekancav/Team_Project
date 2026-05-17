@@ -112,6 +112,10 @@ public class PlayerHealth : MonoBehaviour
     {
         if (isDead || isInvincible)
             return;
+        
+        SFXManager.Instance.PlaySFX(
+            SFXManager.Instance.damage
+        );
 
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
@@ -131,6 +135,13 @@ public class PlayerHealth : MonoBehaviour
                 animator.SetTrigger("Hit");
 
             StartCoroutine(InvincibilityRoutine());
+        }
+
+        // Find the Ascent Manager in the scene and abort the flight
+        AscentManager flightManager = FindObjectOfType<AscentManager>();
+        if (flightManager != null)
+        {
+            flightManager.AbortFlight();
         }
     }
 

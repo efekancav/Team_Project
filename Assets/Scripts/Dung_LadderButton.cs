@@ -15,6 +15,10 @@ public class Dung_LadderButton : MonoBehaviour
         {
             objectsOnButton++;
 
+            SFXManager.Instance.PlaySFX(
+                SFXManager.Instance.buttonPress
+            );
+
             GetComponent<SpriteRenderer>().sprite = pressedSprite;
 
             if (targetLadder != null)
@@ -29,6 +33,10 @@ public class Dung_LadderButton : MonoBehaviour
         if (other.CompareTag("Player") || other.CompareTag("MovableBox"))
         {
             objectsOnButton--;
+
+            SFXManager.Instance.PlaySFX(
+                SFXManager.Instance.buttonRelease
+            );
 
             if (objectsOnButton <= 0)
             {
