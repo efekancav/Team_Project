@@ -15,6 +15,9 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+
+            if (GetComponent<AstarSceneBootstrap>() == null)
+                gameObject.AddComponent<AstarSceneBootstrap>();
         }
         else
         {

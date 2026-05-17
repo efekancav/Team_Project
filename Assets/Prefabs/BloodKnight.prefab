@@ -131,7 +131,7 @@ Transform:
   m_GameObject: {fileID: 5184725234388569420}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.616, y: -0.952, z: 0}
+  m_LocalPosition: {x: 1.57, y: -0.952, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -162,7 +162,7 @@ Transform:
   m_GameObject: {fileID: 6638706644390822893}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.5, y: -0.42, z: 0}
+  m_LocalPosition: {x: 1.08, y: -0.28, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -181,6 +181,7 @@ GameObject:
   - component: {fileID: 214891848782202005}
   - component: {fileID: 6938132800300542135}
   - component: {fileID: 9210875049334577037}
+  - component: {fileID: 716006150784370498}
   m_Layer: 7
   m_Name: BloodKnight
   m_TagString: Enemy
@@ -223,24 +224,68 @@ MonoBehaviour:
   maxHealth: 150
   moveSpeed: 2.5
   attackDamage: 15
-  jumpForce: 5
+  jumpForce: 8.7
   detectionRange: 7
   attackRange: 1.2
-  attackCooldown: 1.5
+  attackCooldown: 2
+  closeCombatPadding: 0.15
+  meleeVerticalTolerance: 1.85
+  meleeHorizontalExtra: 0.35
+  meleeReleaseHorizontalExtra: 0.45
+  meleeReleaseVerticalExtra: 0.55
+  requireLineOfSight: 1
+  alwaysChaseWithinDetectionFraction: 0.55
+  chaseMemoryAfterLostSight: 2.5
+  lineOfSightOriginYOffset: 0.45
+  knockbackHorizontalForce: 4
+  knockbackVerticalForce: 2
+  knockbackStunDuration: 0.35
+  showDamageNumbers: 1
+  enablePatrol: 1
+  patrolPoints: []
+  patrolMoveSpeedMultiplier: 0.65
+  patrolPointReachedDistance: 0.4
+  patrolWaitTime: 1.25
   visual: {fileID: 3303856272230073417}
   animator: {fileID: 4288888679587083469}
   attackPoint: {fileID: 5509311999669999340}
   groundCheck: {fileID: 375591957026313521}
-  attackRadius: 0.5
+  wallCheck: {fileID: 1010723892556786026}
+  edgeCheck: {fileID: 4972647018433562222}
+  attackRadius: 0.85
   playerLayer:
     serializedVersion: 2
     m_Bits: 64
   groundLayer:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 264
   checkRadius: 0.2
   nextWaypointDistance: 1
   pathUpdateRate: 0.5
+  allowPartialPaths: 1
+  logPathFailures: 1
+  pathFailLogInterval: 2
+  drawActivePathInScene: 1
+  waypointSameXEpsilon: 0.04
+  underPlayerHorizontalDeadZone: 0.14
+  underPlayerWiggleMinDy: 0.22
+  underPlayerWiggleHz: 1.85
+  chaseJumpVerticalThreshold: 0.4
+  pathWaypointJumpDy: 0.35
+  pathJumpMinPlayerDy: 0.12
+  edgeDropDetectDistance: 1.6
+  wallAheadCheckDistance: 0.22
+  ledgeJumpMinPlayerDy: 0.22
+  ledgeJumpMinWaypointDy: 0.32
+  wallJumpRelaxedHeightFactor: 0.4
+  ledgeForwardDotThreshold: 0.2
+  ledgeJumpVerticalMultiplier: 1.28
+  spikeImmunityDuration: 0.55
+  spikeKnockbackJumpCooldown: 0.45
+  chaseJumpCooldownOnSpikeFooting: 0.65
+  suppressChaseJumpOnSpikesOnly: 1
+  spikeEscapeHorizonRayLength: 3.5
+  spikeEscapeRayStartYOffset: 0.12
 --- !u!50 &214891848782202005
 Rigidbody2D:
   serializedVersion: 4
@@ -331,6 +376,30 @@ MonoBehaviour:
   tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   graphMask:
     value: -1
+--- !u!114 &716006150784370498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7222625901577561006}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 711c5c10004ac2f41bcc371e8c9cb26b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hazardTags:
+  - Spike
+  hazardLayers:
+    serializedVersion: 2
+    m_Bits: 256
+  includeDamageZones: 1
+  graphUpdatePadding: 0.35
+  hazardRescanInterval: 0
+  hazardTagPenalty: 20000
+  allowPartialPaths: 1
+  waypointHazardCheckRadius: 0.28
+  logScanResults: 0
 --- !u!1 &7650232951613972651
 GameObject:
   m_ObjectHideFlags: 0
