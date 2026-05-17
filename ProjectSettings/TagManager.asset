@@ -6,14 +6,11 @@ TagManager:
   tags:
   - Ladder
   - MovableBox
-<<<<<<< Updated upstream
-=======
   - Spike
   - MovableBox
   - Ladder
   - Enemy
   - Hazard
->>>>>>> Stashed changes
   layers:
   - Default
   - TransparentFX
@@ -21,6 +18,9 @@ TagManager:
   - surface
   - Water
   - UI
+  - Player
+  - Enemy
+  - Spike
   - 
   - 
   - 
