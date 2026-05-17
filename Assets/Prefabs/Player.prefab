@@ -94,7 +94,7 @@ MonoBehaviour:
   attackDamage: 25
   enemyLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 32768
   attackHitDelay: 0.25
   groundCheck: {fileID: 8132172953516450885}
   groundCheckRadius: 0.2
@@ -104,7 +104,7 @@ MonoBehaviour:
   headCheckRadius: 0.2
   surfaceLayer:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 0
   rb: {fileID: 814339752231345501}
   animator: {fileID: 7820205783757889601}
   playerCollider: {fileID: 1829240567615706863}
