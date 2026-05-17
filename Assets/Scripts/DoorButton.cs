@@ -11,24 +11,42 @@ public class FloorButton : MonoBehaviour
     [Tooltip("If checked, it stays down forever. If unchecked, it pops up when you step off.")]
     public bool staysPressed = false;
 
+    // --- NEW: The Special Rule Toggle ---
+    [Tooltip("If checked, ONLY the boulder can press this. Player and boxes are ignored.")]
+    public bool boulderOnly = false;
+
     [Header("Linked Objects")]
     public GameObject objectToEnable;
     public GameObject objectToDisable;
 
-    // We use a counter so if a Player AND a Box are on it, it doesn't unpress when only one leaves!
     private int objectsOnButton = 0;
     private bool isPressed = false;
 
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        spriteRenderer.sprite = unpressedSprite; // Set to default picture
+        spriteRenderer.sprite = unpressedSprite;
+    }
+
+    // --- NEW: A helper method to keep the trigger logic clean ---
+    private bool IsValidTrigger(Collider2D other)
+    {
+        if (boulderOnly)
+        {
+            // Remember from our earlier trap setup, your boulder is tagged as "Hazard"!
+            return other.CompareTag("Hazard");
+        }
+        else
+        {
+            // The classic behavior for all your older rooms
+            return other.CompareTag("Player") || other.CompareTag("MovableBox");
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // Make sure your movable block has the tag "MovableBox"
-        if (other.CompareTag("Player") || other.CompareTag("MovableBox"))
+        // Now we just ask our helper method if the object is allowed
+        if (IsValidTrigger(other))
         {
             objectsOnButton++;
             UpdateButtonState();
@@ -37,12 +55,11 @@ public class FloorButton : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("Player") || other.CompareTag("MovableBox"))
+        if (IsValidTrigger(other))
         {
             objectsOnButton--;
             if (objectsOnButton < 0) objectsOnButton = 0;
 
-            // Only unpress if the rule allows it
             if (!staysPressed)
             {
                 UpdateButtonState();
@@ -54,7 +71,6 @@ public class FloorButton : MonoBehaviour
     {
         if (objectsOnButton > 0 && !isPressed)
         {
-            // PRESS IT DOWN
             isPressed = true;
             spriteRenderer.sprite = pressedSprite;
 
@@ -63,12 +79,11 @@ public class FloorButton : MonoBehaviour
         }
         else if (objectsOnButton == 0 && isPressed && !staysPressed)
         {
-            // POP IT BACK UP
             isPressed = false;
             spriteRenderer.sprite = unpressedSprite;
 
-            if (objectToDisable != null) objectToDisable.SetActive(true); // Door comes back!
-            if (objectToEnable != null) objectToEnable.SetActive(false);  // Ladder vanishes!
+            if (objectToDisable != null) objectToDisable.SetActive(true);
+            if (objectToEnable != null) objectToEnable.SetActive(false);
         }
     }
 }

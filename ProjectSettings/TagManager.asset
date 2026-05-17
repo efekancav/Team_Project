@@ -7,7 +7,10 @@ TagManager:
   - Ladder
   - MovableBox
   - Spike
+  - MovableBox
+  - Ladder
   - Enemy
+  - Hazard
   layers:
   - Default
   - TransparentFX
@@ -41,13 +44,10 @@ TagManager:
   - 
   - 
   - 
+  - 
+  - 
+  - 
   m_SortingLayers:
   - name: Default
     uniqueID: 0
-    locked: 0
-  - name: Foreground
-    uniqueID: 2557288175
-    locked: 0
-  - name: Characters
-    uniqueID: 1514203663
     locked: 0
