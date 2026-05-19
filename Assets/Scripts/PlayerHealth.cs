@@ -38,11 +38,27 @@ public class PlayerHealth : MonoBehaviour
     private Color originalPlayerColor;
     private Transform currentRespawnPoint;
 
+    void Awake()
+    {
+        GetReferences();
+    }
+
     void Start()
     {
-        currentHealth = maxHealth;
-        currentLives = maxLives;
+        currentRespawnPoint = defaultRespawnPoint;
+        StartCoroutine(InitializeHealthRoutine());
+    }
 
+    IEnumerator InitializeHealthRoutine()
+    {
+        yield return null;
+
+        FindUIReferences();
+        ResetHealthAndLives();
+    }
+
+    void GetReferences()
+    {
         if (rb == null)
             rb = GetComponent<Rigidbody2D>();
 
@@ -57,8 +73,33 @@ public class PlayerHealth : MonoBehaviour
 
         if (playerSprite != null)
             originalPlayerColor = playerSprite.color;
+    }
 
-        currentRespawnPoint = defaultRespawnPoint;
+    void FindUIReferences()
+    {
+        if (healthBarUI == null)
+            healthBarUI = FindObjectOfType<HealthBarUI>();
+
+        if (heartUI == null)
+            heartUI = FindObjectOfType<HeartUI>();
+    }
+
+    public void ResetHealthAndLives()
+    {
+        currentHealth = maxHealth;
+        currentLives = maxLives;
+
+        isDead = false;
+        isInvincible = false;
+
+        if (playerController != null)
+            playerController.enabled = true;
+
+        if (rb != null)
+        {
+            rb.velocity = Vector2.zero;
+            rb.angularVelocity = 0f;
+        }
 
         UpdateUI();
     }
@@ -128,6 +169,7 @@ public class PlayerHealth : MonoBehaviour
         {
             currentLives = 0;
             UpdateUI();
+
             Invoke(nameof(RestartLevel), respawnDelay);
             return;
         }
@@ -149,6 +191,7 @@ public class PlayerHealth : MonoBehaviour
 
         currentHealth = maxHealth;
         isDead = false;
+        isInvincible = false;
 
         if (animator != null)
         {
@@ -184,6 +227,9 @@ public class PlayerHealth : MonoBehaviour
 
     IEnumerator DamageFlashRoutine()
     {
+        if (playerSprite == null)
+            yield break;
+
         playerSprite.color = damageFlashColor;
 
         yield return new WaitForSeconds(damageFlashDuration);
@@ -193,6 +239,9 @@ public class PlayerHealth : MonoBehaviour
 
     void UpdateUI()
     {
+        if (healthBarUI == null || heartUI == null)
+            FindUIReferences();
+
         if (healthBarUI != null)
             healthBarUI.SetHealth(currentHealth);
 

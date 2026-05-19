@@ -14,6 +14,10 @@ public class DamageZone : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        // --- NEW: Safety check to ensure the object doing the damaging is actually a Hazard ---
+        if (!gameObject.CompareTag("Hazard"))
+            return;
+
         if (!other.CompareTag("Player"))
             return;
 
@@ -34,6 +38,10 @@ public class DamageZone : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D other)
     {
+        // --- NEW: Safety check ---
+        if (!gameObject.CompareTag("Hazard"))
+            return;
+
         if (!damageOverTime)
             return;
 
@@ -60,6 +68,10 @@ public class DamageZone : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D other)
     {
+        // --- NEW: Safety check ---
+        if (!gameObject.CompareTag("Hazard"))
+            return;
+
         if (!other.CompareTag("Player"))
             return;
 

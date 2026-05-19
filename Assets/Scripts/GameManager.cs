@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
     public Vector3 lastRoom1Position;
     public bool hasStoredPosition = false;
 
+    public int keysCollected = 0; // Dungeon system (keys)
     private void Awake()
     {
         // This makes sure there is only ever one Manager and it stays alive between scenes

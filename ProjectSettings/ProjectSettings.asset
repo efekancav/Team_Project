@@ -728,11 +728,11 @@ PlayerSettings:
   qualitySettingsNames: []
   projectName: Team Project
   organizationId: rondiaksofiia
-  cloudProjectId: 1909a7c4-8348-42fa-ad7c-88d9da7fbe8b
+  cloudProjectId: 067b44b7-bce7-4913-88c0-b2744532abab
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
   projectName: 2Dgame
-  organizationId: efekancav
+  organizationId: rondiaksofiia
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   hmiLoadingImage: {fileID: 0}
