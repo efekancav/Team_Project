@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -331,6 +332,8 @@ public class PlayerController : MonoBehaviour
             !isCrouching &&
             !isClimbing)
         {
+            CancelInvoke(nameof(DealAttackDamage));
+
             int randomAttack = Random.Range(1, 4);
             animator.SetInteger("AttackIndex", randomAttack);
 
@@ -351,11 +354,14 @@ public class PlayerController : MonoBehaviour
 
         Collider2D[] hits = Physics2D.OverlapCircleAll(attackPoint.position, attackRadius, enemyLayer);
 
+        // Same enemy can have multiple colliders (root + child on Enemy layer) — damage once per swing.
+        HashSet<EnemyAI> hitEnemies = new HashSet<EnemyAI>();
+
         foreach (Collider2D hit in hits)
         {
             EnemyAI enemy = hit.GetComponentInParent<EnemyAI>();
 
-            if (enemy != null)
+            if (enemy != null && hitEnemies.Add(enemy))
             {
                 Vector2 knockDir = (hit.transform.position - transform.position).normalized;
                 enemy.TakeDamage(attackDamage, knockDir);
