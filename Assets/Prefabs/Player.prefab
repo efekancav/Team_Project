@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2815487709452825733}
   - component: {fileID: 814339752231345501}
   - component: {fileID: 1829240567615706863}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -53,9 +53,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
-  currentHealth: 0
+  currentHealth: 100
   maxLives: 3
-  currentLives: 0
+  currentLives: 3
   healthBarUI: {fileID: 0}
   heartUI: {fileID: 0}
   playerSprite: {fileID: 3009198770660449070}
@@ -84,7 +84,7 @@ MonoBehaviour:
   crouchSpeed: 2
   rollSpeed: 8
   rollDuration: 0.4
-  jumpHeightInTiles: 2.5
+  jumpHeightInTiles: 4
   jumpForwardDistanceInTiles: 5
   tileSize: 1
   wallSlideSpeed: 2
@@ -183,7 +183,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8132172953516450885}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: GroundCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -199,7 +199,7 @@ Transform:
   m_GameObject: {fileID: 2069146872628082125}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.818, z: 0}
+  m_LocalPosition: {x: 0.02, y: -0.838, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -216,7 +216,7 @@ GameObject:
   - component: {fileID: 6004155508643889076}
   - component: {fileID: 3009198770660449070}
   - component: {fileID: 7820205783757889601}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Visual
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -320,7 +320,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7833197839789280049}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: WallCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -336,7 +336,7 @@ Transform:
   m_GameObject: {fileID: 3909344317780879849}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.612, y: -0.66, z: 0}
+  m_LocalPosition: {x: 0.47, y: -0.66, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -382,7 +382,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8771264597056946408}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: HeadCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}

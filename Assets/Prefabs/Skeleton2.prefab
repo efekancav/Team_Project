@@ -9,18 +9,18 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1961111552608420355}
-  - component: {fileID: 3324790661358685929}
+  - component: {fileID: 2676913640539279538}
   - component: {fileID: 6353061670620712823}
   - component: {fileID: 9182454582933544328}
   - component: {fileID: 5877268068666685849}
   - component: {fileID: 5797579614509801834}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Skeleton2
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1961111552608420355
 Transform:
   m_ObjectHideFlags: 0
@@ -41,7 +41,7 @@ Transform:
   - {fileID: 5492612748380697703}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3324790661358685929
+--- !u!114 &2676913640539279538
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -53,11 +53,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42ca1f09d736f654e9f7753b81e93616, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 80
+  maxHealth: 100
   moveSpeed: 2
-  attackDamage: 8
-  jumpForce: 8.7
-  detectionRange: 7
+  attackDamage: 10
+  jumpForce: 6
+  detectionRange: 6
   attackRange: 1.2
   attackCooldown: 2
   closeCombatPadding: 0.15
@@ -78,13 +78,13 @@ MonoBehaviour:
   patrolMoveSpeedMultiplier: 0.65
   patrolPointReachedDistance: 0.4
   patrolWaitTime: 1.25
-  visual: {fileID: 0}
-  animator: {fileID: 0}
-  attackPoint: {fileID: 0}
-  groundCheck: {fileID: 0}
-  wallCheck: {fileID: 0}
-  edgeCheck: {fileID: 0}
-  attackRadius: 0.85
+  visual: {fileID: 1292590583840231342}
+  animator: {fileID: 2157085558470250318}
+  attackPoint: {fileID: 7921559681715530232}
+  groundCheck: {fileID: 5492612748380697703}
+  wallCheck: {fileID: 7639397546355016830}
+  edgeCheck: {fileID: 5350935966394663866}
+  attackRadius: 0.5
   playerLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -103,13 +103,13 @@ MonoBehaviour:
   underPlayerWiggleMinDy: 0.22
   underPlayerWiggleHz: 1.85
   chaseJumpVerticalThreshold: 0.4
-  pathWaypointJumpDy: 0.35
+  pathWaypointJumpDy: 0.65
   pathJumpMinPlayerDy: 0.12
-  edgeDropDetectDistance: 1.6
+  edgeDropDetectDistance: 0.45
   wallAheadCheckDistance: 0.22
-  ledgeJumpMinPlayerDy: 0.22
-  ledgeJumpMinWaypointDy: 0.32
-  wallJumpRelaxedHeightFactor: 0.4
+  ledgeJumpMinPlayerDy: 0.18
+  ledgeJumpMinWaypointDy: 0.12
+  wallJumpRelaxedHeightFactor: 0.55
   ledgeForwardDotThreshold: 0.2
   ledgeJumpVerticalMultiplier: 1.28
   spikeImmunityDuration: 0.55
@@ -144,7 +144,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!70 &9182454582933544328
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -177,8 +177,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_Size: {x: 0.5, y: 1}
+  m_Offset: {x: 0, y: -0.73}
+  m_Size: {x: 0.78, y: 1.39}
   m_Direction: 0
 --- !u!114 &5877268068666685849
 MonoBehaviour:
@@ -241,7 +241,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7639397546355016830}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: WallCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -257,7 +257,7 @@ Transform:
   m_GameObject: {fileID: 993585833751704373}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 1.05, y: -0.73, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -272,7 +272,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5350935966394663866}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: EdgeCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -288,7 +288,7 @@ Transform:
   m_GameObject: {fileID: 1487771883306848473}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 2.14, y: -1.11, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -303,7 +303,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7921559681715530232}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: AttackPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -319,7 +319,7 @@ Transform:
   m_GameObject: {fileID: 1880389154393135956}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 1.76, y: -0.63, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -334,7 +334,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5492612748380697703}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: GroundCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -350,7 +350,7 @@ Transform:
   m_GameObject: {fileID: 3939400922299858686}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.07, y: -1.25, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -367,7 +367,7 @@ GameObject:
   - component: {fileID: 1292590583840231342}
   - component: {fileID: 3035440129195748962}
   - component: {fileID: 2157085558470250318}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Visual
   m_TagString: Untagged
   m_Icon: {fileID: 0}

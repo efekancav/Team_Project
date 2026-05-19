@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1254838673758262080}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: WallCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 2214518975041973334}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.99, y: -0.37, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -40,7 +40,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3078350472805460981}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: AttackPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -56,7 +56,7 @@ Transform:
   m_GameObject: {fileID: 6150788179960706083}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 1.15, y: -0.08, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -76,13 +76,13 @@ GameObject:
   - component: {fileID: 7158867725816655034}
   - component: {fileID: 9040524676992193048}
   - component: {fileID: 3167879350733767172}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Vampire
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &9758035989717058
 Transform:
   m_ObjectHideFlags: 0
@@ -115,11 +115,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42ca1f09d736f654e9f7753b81e93616, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
-  moveSpeed: 2
-  attackDamage: 10
-  jumpForce: 6
-  detectionRange: 6
+  maxHealth: 150
+  moveSpeed: 2.5
+  attackDamage: 8
+  jumpForce: 8.7
+  detectionRange: 7
   attackRange: 1.2
   attackCooldown: 2
   closeCombatPadding: 0.15
@@ -140,19 +140,19 @@ MonoBehaviour:
   patrolMoveSpeedMultiplier: 0.65
   patrolPointReachedDistance: 0.4
   patrolWaitTime: 1.25
-  visual: {fileID: 0}
-  animator: {fileID: 0}
-  attackPoint: {fileID: 0}
-  groundCheck: {fileID: 0}
-  wallCheck: {fileID: 0}
-  edgeCheck: {fileID: 0}
-  attackRadius: 0.5
+  visual: {fileID: 2450577106739436439}
+  animator: {fileID: 6371143227781666235}
+  attackPoint: {fileID: 3078350472805460981}
+  groundCheck: {fileID: 2597852063515774407}
+  wallCheck: {fileID: 1254838673758262080}
+  edgeCheck: {fileID: 4846077859559065709}
+  attackRadius: 0.85
   playerLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   groundLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 264
   checkRadius: 0.2
   nextWaypointDistance: 1
   pathUpdateRate: 0.5
@@ -167,11 +167,11 @@ MonoBehaviour:
   chaseJumpVerticalThreshold: 0.4
   pathWaypointJumpDy: 0.35
   pathJumpMinPlayerDy: 0.12
-  edgeDropDetectDistance: 0.45
+  edgeDropDetectDistance: 1.6
   wallAheadCheckDistance: 0.22
-  ledgeJumpMinPlayerDy: 0.18
-  ledgeJumpMinWaypointDy: 0.12
-  wallJumpRelaxedHeightFactor: 0.55
+  ledgeJumpMinPlayerDy: 0.22
+  ledgeJumpMinWaypointDy: 0.32
+  wallJumpRelaxedHeightFactor: 0.4
   ledgeForwardDotThreshold: 0.2
   ledgeJumpVerticalMultiplier: 1.28
   spikeImmunityDuration: 0.55
@@ -206,7 +206,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!70 &7158867725816655034
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -239,8 +239,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_Size: {x: 0.5, y: 1}
+  m_Offset: {x: -0.2, y: -0.43}
+  m_Size: {x: 0.9, y: 1.46}
   m_Direction: 0
 --- !u!114 &9040524676992193048
 MonoBehaviour:
@@ -305,7 +305,7 @@ GameObject:
   - component: {fileID: 2450577106739436439}
   - component: {fileID: 5409977227025337220}
   - component: {fileID: 6371143227781666235}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Visual
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -321,7 +321,7 @@ Transform:
   m_GameObject: {fileID: 7671488991688061786}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.112, y: 0.0615, z: 0}
+  m_LocalPosition: {x: 0.07, y: 0.0615, z: 0}
   m_LocalScale: {x: 9, y: 9, z: 9}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -409,7 +409,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4846077859559065709}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: EdgeCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -425,7 +425,7 @@ Transform:
   m_GameObject: {fileID: 8203980223073660346}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 1.46, y: -0.9, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -440,7 +440,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2597852063515774407}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: GroundCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -456,7 +456,7 @@ Transform:
   m_GameObject: {fileID: 8323470617477632402}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.2, y: -1.05, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
