@@ -7,12 +7,15 @@ TagManager:
   - Ladder
   - MovableBox
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
   - Spike
   - MovableBox
   - Ladder
   - Enemy
   - Hazard
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
   layers:
   - Default
@@ -21,6 +24,12 @@ TagManager:
   - surface
   - Water
   - UI
+<<<<<<< Updated upstream
+=======
+  - Enemy
+  - Player
+  - Spike
+>>>>>>> Stashed changes
   - 
   - 
   - 
